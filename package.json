@@ -1,0 +1,26 @@
+{
+  "name": "appserver",
+  "version": "1.0.0",
+  "author": "Jason Chiang",
+  "description": "HTTP Server for Electrombile",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "Electrombile",
+    "restify"
+  ],
+  "license": "GPL-3.0",
+  "dependencies": {
+    "body-parser": "1.12.3",
+    "restify": "^4.3.0",
+    "cookie-parser": "^1.4.3",
+    "serve-favicon": "^2.2.1",
+    "restify-plugins":"1.4.0"
+  },
+  "engines": {
+    "node": "4.x"
+  }
+}
