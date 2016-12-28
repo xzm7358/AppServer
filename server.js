@@ -7,7 +7,7 @@ var http_options = {
   version: '1.0.0'
 };
 
-var keys_dir = './';
+var keys_dir = './cert/';
 
 const http_server = restify.createServer(http_options);
 

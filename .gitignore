@@ -38,3 +38,6 @@ jspm_packages
 
 # webstorm project
 .idea
+
+# certificate files
+/cert
