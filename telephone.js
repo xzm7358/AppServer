@@ -128,10 +128,8 @@ telephone.post = function(req, res, next) {
     connnection.connect();
     connnection.query(selectsql, function (starterr, startresult){
         if (starterr) {
-            console.log("post3");
             console.log('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
-            return next();
         }
         else {
             res.send({code: 0});
@@ -171,6 +169,9 @@ telephone.get = function(req, res, next) {
             console.log(telephone);
             if (telephone) {
                 res.send({telephone: telephone});
+            }
+            else{
+                res.send({code: 101});
             }
         }
     });
