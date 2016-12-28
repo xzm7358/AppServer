@@ -8,15 +8,17 @@ history.get = function(req, res, next) {
     console.log('GET %s', req.url);
 
     var imei = req.params.imei;
-    var start = req.query.start;
-    var end = req.query.end;
     console.log(imei);
+    var start = req.query.start;
     console.log(start);
+    var end = req.query.end;
     console.log(end);
-    res.setHeader('Content-Type', 'text/plain');
+
+    res.contentType = 'json';
+    var selectsql = 'SELECT * FROM ' + 'gps_' + imei + ' WHERE '+ 'timestamp' + ' BETWEEN ' + start + ' AND ' + end;
     if(!imei)
     {
-        res.send(JSON.stringify({"code":101}));
+        res.send({code: 101});
         return next();
     }
     if(start && !end)
@@ -40,11 +42,9 @@ history.get = function(req, res, next) {
         if (starterr)
         {
             console.log('[SELECT ERROR - ', starterr.message);
-            var rsp = JSON.stringify({"code":101});
-            res.send(rsp);
+            res.send({code: 101});
         }
-        var rsp = JSON.stringify({"gps":startresult});
-        res.send(rsp);
+        res.send({gps:startresult});
     });
     connnection.end();
     return next();
