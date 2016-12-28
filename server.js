@@ -11,13 +11,13 @@ var keys_dir = './';
 
 const http_server = restify.createServer(http_options);
 
-/*var https_options = {
+var https_options = {
   name: 'Electromble@xiaoan',
   key: fs.readFileSync(keys_dir + 'privatekey.key'), //on current folder
   certificate: fs.readFileSync(keys_dir + 'certificate.cert')
 };
-*/
-//const https_server = restify.createServer(https_options);
+
+const https_server = restify.createServer(https_options);
 
 // Put any routing, response, etc. logic here. This allows us to define these functions
 // only once, and it will be re-used on both the HTTP and HTTPs servers
@@ -47,13 +47,12 @@ var setup_server = function (app) {
 
 // Now, setup both servers in one step
 setup_server(http_server);
-//setup_server(https_server);
+setup_server(https_server);
 
-http_server.listen(8080, function () {
+http_server.listen(80, function () {
   console.log('%s listening at %s', http_server.name, http_server.url);
 });
-/*
+
 https_server.listen(443, function () {
   console.log('%s listening at %s', https_server.name, https_server.url);
 });
-*/
