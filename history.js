@@ -3,16 +3,16 @@
  */
 var history = exports;
 
-history.get = function(req, res, next) {
-    console.log('GET %s', req.url);
+history.get = function (req, res, next) {
+  console.log('GET %s', req.url);
 
-    var imei = req.params.imei;
-    var start = req.query.start;
-    var end = req.query.end;
-    
-    console.log(imei);
-    //TODO: get the data from the DB
+  const imei = req.params.imei;
+  const start = req.query.start;
+  const end = req.query.end;
 
-    res.send(req.params);
-    return next();
-}
+  console.log(imei);
+  // TODO: get the data from the DB
+
+  res.send(req.params);
+  return next();
+};

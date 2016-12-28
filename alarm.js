@@ -3,7 +3,8 @@
  */
 
 TopClient = require('topSdk').ApiClient;
-exports.put = function(req, res, next) {
+
+exports.put = function (req, res, next) {
     var telphone = req.params.telphone;
 
     var client = new TopClient({
@@ -29,4 +30,4 @@ exports.put = function(req, res, next) {
     res.send({code: 0});
 
     return next();
-}
+};
