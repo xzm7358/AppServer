@@ -32,11 +32,8 @@ var setup_server = function (app) {
   app.use(plugins.bodyParser());
 
   // Routes
-  app.get('/v1/history/:imei', function (req, res, next) {
-    console.log('GET %s', req.url);
-    res.send(req.params);
-    return next();
-  });
+  var history = require('./history');
+  app.get('/v1/history/:imei', history.get);
 }
 
 // Now, setup both servers in one step
