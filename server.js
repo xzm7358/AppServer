@@ -1,20 +1,20 @@
-var restify = require('restify');
-var plugins = require('restify-plugins');
-var fs = require('fs');
+const restify = require('restify');
+const plugins = require('restify-plugins');
+const fs = require('fs');
 
-var http_options = {
+const http_options = {
   name: 'Electromble@xiaoan',
-  version: '1.0.0'
+  version: '1.0.0',
 };
 
-var keys_dir = './cert/';
+const keys_dir = './cert/';
 
 const http_server = restify.createServer(http_options);
 
 var https_options = {
   name: 'Electromble@xiaoan',
   key: fs.readFileSync(keys_dir + 'privatekey.key'), //on current folder
-  certificate: fs.readFileSync(keys_dir + 'certificate.cert')
+  certificate: fs.readFileSync(keys_dir + 'certificate.cert'),
 };
 
 const https_server = restify.createServer(https_options);

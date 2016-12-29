@@ -6,7 +6,10 @@
   "main": "server.js",
   "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint *.js",
+    "lint-html": "eslint *.js -f html -o ./reports/lint-results.html"
   },
   "keywords": [
     "Electrombile",
