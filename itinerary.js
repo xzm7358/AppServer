@@ -6,6 +6,7 @@ var itinerary = exports;
 
 itinerary.get = function(req, res, next) {
     console.log('GET %s', req.url);
+    res.contentType = 'json';
 
     var imei = req.params.imei;
     console.log(imei);
@@ -14,7 +15,6 @@ itinerary.get = function(req, res, next) {
     var end = req.query.end;
     console.log(end);
 
-    res.contentType = 'json';
     var selectsql = 'SELECT * FROM ' + 'itinerary_' + imei + ' WHERE '+ 'starttime >= ' + start + ' AND endtime <= ' + end;
     if(!imei)
     {
@@ -44,36 +44,41 @@ itinerary.get = function(req, res, next) {
             console.log('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
         }
-        var itinerary = [];
-        if(start) {
-            for (var i = 0; i < startresult.length; i++) {
+        else if(startresult.length === 0){
+            res.send({code: 101});
+        }
+        else{
+            var itinerary = [];
+            if(start) {//历史轨迹
+                for (var i = 0; i < startresult.length; i++) {
+                    var iItinerary = {};
+                    var iStart = {};
+                    var iEnd = {};
+                    iStart.timestamp = startresult[i].starttime;
+                    iStart.lat = startresult[i].startlat;
+                    iStart.lon = startresult[i].startlon;
+
+                    iEnd.timestamp = startresult[i].endtime;
+                    iEnd.lat = startresult[i].endlat;
+                    iEnd.lon = startresult[i].endlon;
+
+                    iItinerary.start = iStart;
+                    iItinerary.end = iEnd;
+                    iItinerary.miles = startresult[i].itinerary;
+
+                    itinerary.push(iItinerary);
+                }
+            }
+            else {//最后的GPS定位
                 var iItinerary = {};
-                var iStart = {};
-                var iEnd = {};
-                iStart.timestamp = startresult[i].starttime;
-                iStart.lat = startresult[i].startlat;
-                iStart.lon = startresult[i].startlon;
-
-                iEnd.timestamp = startresult[i].endtime;
-                iEnd.lat = startresult[i].endlat;
-                iEnd.lon = startresult[i].endlon;
-
-                iItinerary.start = iStart;
-                iItinerary.end = iEnd;
-                iItinerary.miles = startresult[i].itinerary;
-
+                iItinerary.start = 0;
+                iItinerary.end = 0;
+                iItinerary.miles = startresult[0].itinerary;
                 itinerary.push(iItinerary);
             }
+            console.log(itinerary);
+            res.send({itinerary: itinerary});
         }
-        else {
-            var iItinerary = {};
-            iItinerary.start = 0;
-            iItinerary.end = 0;
-            iItinerary.miles = startresult[0].itinerary;
-            itinerary.push(iItinerary);
-        }
-        console.log(itinerary);
-        res.send({itineary:itinerary});
     });
     connnection.end();
     return next();

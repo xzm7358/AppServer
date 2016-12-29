@@ -6,6 +6,7 @@ var history = exports;
 
 history.get = function(req, res, next) {
     console.log('GET %s', req.url);
+    res.contentType = 'json';
 
     var imei = req.params.imei;
     console.log(imei);
@@ -14,7 +15,6 @@ history.get = function(req, res, next) {
     var end = req.query.end;
     console.log(end);
 
-    res.contentType = 'json';
     var selectsql = 'SELECT * FROM ' + 'gps_' + imei + ' WHERE '+ 'timestamp' + ' BETWEEN ' + start + ' AND ' + end;
     if(!imei)
     {
@@ -44,7 +44,12 @@ history.get = function(req, res, next) {
             console.log('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
         }
-        res.send({gps:startresult});
+        else if(startresult.length === 0){
+            res.send({code: 101});
+        }
+        else{
+            res.send({gps: startresult});
+        }
     });
     connnection.end();
     return next();
