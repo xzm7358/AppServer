@@ -34,9 +34,15 @@ var setup_server = function (app) {
   // Routes
   var history = require('./history');
   app.get('/v1/history/:imei', history.get);
-  
-  var alarm = require('./alarm');
-  app.put('/v1/alarm/:telphone', alarm.put)
+
+  var itinerary = require('./itinerary');
+  app.get('/v1/itinerary/:imei', itinerary.get);
+
+  var telephone = require('./telephone');
+  app.put('/v1/telephone/:imei', telephone.put);
+  app.post('/v1/telephone/:imei', telephone.post);
+  app.get('/v1/telephone/:imei', telephone.get);
+  app.del('/v1/telephone/:imei', telephone.del);
 }
 
 // Now, setup both servers in one step

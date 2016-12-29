@@ -21,12 +21,7 @@
     "cookie-parser": "^1.4.3",
     "mysql": "^2.12.0",
     "restify": "^4.3.0",
-    "restify-plugins": "1.4.0",
-    "node-mysql": "0.4.2",
-    "orm": "3.2.2",
-    "waterline": "0.11.6",
-    "sails-mysql": "0.11.5",
-    "topSdk": "1.1.2"
+    "restify-plugins": "1.4.0"
   },
   "engines": {
     "node": "4.x"
