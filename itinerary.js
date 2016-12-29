@@ -5,32 +5,38 @@ var mysql = require('mysql');
 var itinerary = exports;
 
 itinerary.get = function(req, res, next) {
+    var start;
+    var end;
+    var selectsql;
+
     console.log('GET %s', req.url);
     res.contentType = 'json';
 
-    var imei = req.params.imei;
-    console.log(imei);
-    var start = req.query.start;
-    console.log(start);
-    var end = req.query.end;
-    console.log(end);
-
-    var selectsql = 'SELECT * FROM ' + 'itinerary_' + imei + ' WHERE '+ 'starttime >= ' + start + ' AND endtime <= ' + end;
-    if(!imei)
-    {
+    if(!req.params.hasOwnProperty('imei')){
         res.send({code: 101});
         return next();
     }
-    if(start && !end)
-    {
-        end =  start + 86400 - (start % 86400);
-        selectsql = 'SELECT * FROM ' + 'itinerary_' + imei + ' WHERE '+ 'starttime >= ' + start + ' AND endtime <= ' + end;
+    var imei = req.params.imei;
+    if(imei.length != 15) {
+        res.send({code: 101});
+        return next();
     }
-    if(!start)
-    {
+    console.log('get imei: '+ imei);
+
+    if(!req.query.hasOwnProperty('start')){
         selectsql = 'SELECT itinerary FROM object WHERE imei = \''+ imei + '\'';
     }
-
+    else{
+        start = req.query.start;
+        if(!req.query.hasOwnProperty('end')){
+            end =  start + 86400 - (start % 86400);
+        }
+        else {
+            end = req.query.end;
+        }
+        selectsql = 'SELECT * FROM ' + 'itinerary_' + imei + ' WHERE '+ 'starttime >= ' + start + ' AND endtime <= ' + end;
+    }
+    console.log(selectsql);
     var connnection = mysql.createConnection({
         host : 'test.xiaoan110.com',
         user : 'eelink',
@@ -39,17 +45,19 @@ itinerary.get = function(req, res, next) {
     });
     connnection.connect();
     connnection.query(selectsql, function (starterr, startresult){
+        connnection.end();
         if (starterr)
         {
             console.log('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
         }
         else if(startresult.length === 0){
+            console.log('no data in result');
             res.send({code: 101});
         }
         else{
             var itinerary = [];
-            if(start) {//历史轨迹
+            if(start) {//里程
                 for (var i = 0; i < startresult.length; i++) {
                     var iItinerary = {};
                     var iStart = {};
@@ -69,17 +77,17 @@ itinerary.get = function(req, res, next) {
                     itinerary.push(iItinerary);
                 }
             }
-            else {//最后的GPS定位
+            else {//总里程
                 var iItinerary = {};
                 iItinerary.start = 0;
                 iItinerary.end = 0;
                 iItinerary.miles = startresult[0].itinerary;
                 itinerary.push(iItinerary);
             }
-            console.log(itinerary);
+            console.log('db proc OK');
             res.send({itinerary: itinerary});
         }
     });
-    connnection.end();
+
     return next();
 }
