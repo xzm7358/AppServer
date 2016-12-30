@@ -38,3 +38,9 @@ jspm_packages
 
 # webstorm project
 .idea
+
+# certificate files
+/cert
+
+# lint report
+/reports
