@@ -43,6 +43,14 @@ var setup_server = function (app) {
   app.post('/v1/telephone/:imei', telephone.post);
   app.get('/v1/telephone/:imei', telephone.get);
   app.del('/v1/telephone/:imei', telephone.del);
+
+  var version = require('./version');
+  app.get('/v1/version', version.get);
+
+  var package = require('./package');
+  app.get('/v1/package', package.get);
+
+
 }
 
 // Now, setup both servers in one step
