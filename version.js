@@ -59,7 +59,6 @@ version.get = function(req , res, next) {
             versionlog.versionCode = result[0].versionCode;
             versionlog.changeLog   = result[0].changeLog;
             versionlog.packageSize = (size / (1024*1024)).toFixed(2);
-            version.push(versionlog);
             console.log('db AppPackge info OK');
             res.send({
                 versionName:versionlog.versionName,

@@ -5,7 +5,6 @@
 var device = exports;
 
 var http = require('http');
-var querystring = require('querystring');
 
 device.post = function (req, res, next) {
     console.log(req.body);
@@ -41,7 +40,7 @@ device.post = function (req, res, next) {
        }
 
     });
-    requset.write(transdata + "\n");
+    requset.write(transdata);
     requset.end();
 
     return next();
