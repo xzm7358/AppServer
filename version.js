@@ -5,6 +5,7 @@
 var version = exports;
 var mysql = require('mysql');
 var fs = require('fs');
+var config = require('./config.json');
 
 version.get = function(req , res, next) {
     var type;
@@ -12,7 +13,6 @@ version.get = function(req , res, next) {
     var size;
     var selectsql;
     var versionlog = {};
-    var version = [];
     console.log("GET ", req.url);
     res.contentType = 'json';
     type = req.query.type;
@@ -30,12 +30,7 @@ version.get = function(req , res, next) {
         res.send({code: 101});
         return next();
     }
-    var connnection = mysql.createConnection({
-        host : 'test.xiaoan110.com',
-        user : 'eelink',
-        password: 'eelink',
-        database: 'gps',
-    });
+    var connnection = mysql.createConnection(config.mysql);
     connnection.connect();
     connnection.query(selectsql, function (error, result) {
         connnection.end();

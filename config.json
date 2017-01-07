@@ -1,0 +1,20 @@
+{
+  "name": "server config",
+  "description": "serve for the server configuration",
+  "server": {
+    "http_options": {
+      "name": "Electromble@xiaoan",
+      "version": "1.0.0"
+    },
+    "https_options": {
+      "name": "Electromble@xiaoan"
+    }
+
+  },
+  "mysql": {
+    "host": "test.xiaoan110.com",
+    "user": "eelink",
+    "password": "eelink",
+    "database": "gps"
+  }
+}

@@ -5,6 +5,8 @@
 var package = exports;
 var mysql = require('mysql');
 var fs = require('fs');
+var config = require('./config.json');
+
 package.get = function (req, res, next) {
     var type;
     console.log("GET ", req.url);
@@ -19,12 +21,7 @@ package.get = function (req, res, next) {
         res.end({code:101});
         return next();
     }
-    var connnection = mysql.createConnection({
-        host : 'test.xiaoan110.com',
-        user : 'eelink',
-        password: 'eelink',
-        database: 'gps',
-    });
+    var connnection = mysql.createConnection(config.mysql);
     connnection.connect();
     connnection.query(selectsql, function (error , result) {
         connnection.end();

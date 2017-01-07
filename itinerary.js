@@ -2,6 +2,7 @@
  * Created by lc on 2016-12-28.
  */
 var mysql = require('mysql');
+var config = require('./config.json');
 var itinerary = exports;
 
 itinerary.get = function(req, res, next) {
@@ -37,12 +38,7 @@ itinerary.get = function(req, res, next) {
         selectsql = 'SELECT * FROM ' + 'itinerary_' + imei + ' WHERE '+ 'starttime >= ' + start + ' AND endtime <= ' + end;
     }
     console.log(selectsql);
-    var connnection = mysql.createConnection({
-        host : 'test.xiaoan110.com',
-        user : 'eelink',
-        password: 'eelink',
-        database: 'gps',
-    });
+    var connnection = mysql.createConnection(config.mysql);
     connnection.connect();
     connnection.query(selectsql, function (starterr, startresult){
         connnection.end();

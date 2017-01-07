@@ -3,6 +3,7 @@
  */
 var mysql = require('mysql');
 var history = exports;
+var config = require('./config.json');
 
 history.get = function(req, res, next) {
     var start;
@@ -40,12 +41,7 @@ history.get = function(req, res, next) {
     }
 
     console.log(selectsql);
-    var connnection = mysql.createConnection({
-        host : 'test.xiaoan110.com',
-        user : 'eelink',
-        password: 'eelink',
-        database: 'gps',
-    });
+    var connnection = mysql.createConnection(config.mysql);
     connnection.connect();
     connnection.query(selectsql, function (starterr, startresult){
         connnection.end();
