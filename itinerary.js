@@ -5,8 +5,6 @@ var dbhandler = require('./dbhandler');
 var itinerary = exports;
 
 itinerary.get = function(req, res, next) {
-    var start;
-    var end;
     var selectsql;
 
     console.log('GET %s', req.url);
@@ -27,9 +25,9 @@ itinerary.get = function(req, res, next) {
         selectsql = 'SELECT itinerary FROM object WHERE imei = \''+ imei + '\'';
     }
     else{
-        start = req.query.start;
+        var start = req.query.start;
         if(!req.query.hasOwnProperty('end')){
-            end =  start + 86400 - (start % 86400);
+            var end =  start + 86400 - (start % 86400);
         }
         else {
             end = req.query.end;

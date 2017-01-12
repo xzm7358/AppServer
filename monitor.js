@@ -6,9 +6,6 @@ var monitor = exports;
 var fs = require('fs');
 
 monitor.get = function (req, res, next) {
-    var name;
-    var filepath;
-
     console.log('GET %s', req.url);
     res.contentType = 'json';
     if (!req.params.hasOwnProperty('name')) {
@@ -16,8 +13,8 @@ monitor.get = function (req, res, next) {
         res.send({code:101});
         return next();
     }
-    name = req.params.name;
-    filepath = '/var/ftp/home/' + name;//
+    var name = req.params.name;
+    var filepath = '/var/ftp/home/' + name;//
     fs.stat(filepath, function (error, stats) {
         if (error) {
             console.log("file " +filepath + "not found");

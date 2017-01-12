@@ -7,13 +7,10 @@ var dbhandler = require('./dbhandler');
 var fs = require('fs');
 
 version.get = function(req , res, next) {
-    var type;
-    var app_path;
-    var size;
     var selectsql;
     console.log("GET ", req.url);
     res.contentType = 'json';
-    type = req.query.type;
+    var type = req.query.type;
     console.log('type: ', type);
     if (( 'ios' === type)||('1' === type))
     {
@@ -32,8 +29,8 @@ version.get = function(req , res, next) {
             console.log('no data in database');
             res.send({code:101});
         } else {
-            app_path = './app/' + result[0].fileName;
-            size = (fs.statSync(app_path).size / (1024*1024)).toFixed(2);
+            var app_path = './app/' + result[0].fileName;
+            var size = (fs.statSync(app_path).size / (1024*1024)).toFixed(2);
             console.log('db AppPackge info OK');
             res.send({
                 versionName:result[0].versionName,

@@ -5,9 +5,6 @@ var history = exports;
 var dbhandler = require('./dbhandler');
 
 history.get = function(req, res, next) {
-    var start;
-    var end;
-    var selectsql;
 
     console.log('GET %s', req.url);
     res.contentType = 'json';
@@ -26,12 +23,12 @@ history.get = function(req, res, next) {
     console.log('get imei: '+ imei);
 
     if(!req.query.hasOwnProperty('start')){
-        selectsql = 'SELECT * FROM ' + 'gps_' + imei + ' order by timestamp desc limit 1 ';
+        var selectsql = 'SELECT * FROM ' + 'gps_' + imei + ' order by timestamp desc limit 1 ';
     }
     else{
-        start = req.query.start;
+        var start = req.query.start;
         if(!req.query.hasOwnProperty('end')){
-            end =  start + 86400 - (start % 86400);
+            var end =  start + 86400 - (start % 86400);
         }
         else {
             end = req.query.end;
