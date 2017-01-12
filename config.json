@@ -16,5 +16,15 @@
     "user": "eelink",
     "password": "eelink",
     "database": "gps"
+  },
+  "device_http_options":{
+    "host": "test.xiaoan110.com",
+    "port": 8082,
+    "path": "/v1/device",
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json"
+    }
   }
+
 }

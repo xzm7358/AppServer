@@ -39,7 +39,6 @@ history.get = function(req, res, next) {
         }
         selectsql = 'SELECT * FROM ' + 'gps_' + imei + ' WHERE '+ 'timestamp' + ' BETWEEN ' + start + ' AND ' + end;
     }
-
     console.log(selectsql);
     var connnection = mysql.createConnection(config.mysql);
     connnection.connect();
@@ -60,4 +59,4 @@ history.get = function(req, res, next) {
         }
     });
     return next();
-}
+};

@@ -8,18 +8,15 @@ var fs = require('fs');
 var config = require('./config.json');
 
 package.get = function (req, res, next) {
-    var type;
     console.log("GET ", req.url);
-    res.contentType = 'json';
-    type = req.query.type;
-    if (( 'android' === type)||('0' === type))
-    {
-        selectsql = 'SELECT * from AppPackage order by id desc limit 1';
+
+    var type = req.query.type;
+    var selectsql;
+    if (( 'ios' === type)||('1' === type)) {
+        selectsql = 'SELECT * from AppPackage where type = 1 order by id desc limit 1';
     }
-    else
-    {
-        res.end({code:101});
-        return next();
+    else if (( 'android' === type)||('0' === type) || undefined === type) {
+        selectsql = 'SELECT * from AppPackage where type = 0 order by id desc limit 1';
     }
     var connnection = mysql.createConnection(config.mysql);
     connnection.connect();
@@ -28,30 +25,31 @@ package.get = function (req, res, next) {
         if (error)
         {
             console.log('[SELECT ERROR - ', error.message);
-            res.end({code:101});
+            res.send({code:101});
         }
         else if (res.length === 0)
         {
             console.log('no data in database');
-            res.end({code: 101});
+            res.send({code: 101});
         }
         else {
             var path = './app/' + result[0].fileName;
-            var stats = fs.statSync(path);
-            if (stats.isFile())
-            {
-                res.set({
-                    'Content-Type': 'application/octet-stream',
-                    'Content-Disposition': 'attachment; filename=package',
-                    'Content-Length': stats.size
-                });
-                fs.createReadStream(path).pipe(res);
-            }
-            else
-            {
-                res.end(404);
-            }
-
+            console.log("fileName:",result[0].fileName);
+            fs.stat(path, function (error, stats) {
+                if (error) {
+                    console.log("file " +path + "not found");
+                    res.send({code: 101});
+                }
+                else {
+                    res.set({
+                        'Content-Type': 'application/vnd.android.package-archive',
+                        'Content-Disposition': 'attachment; filename=package',
+                        'Content-Length': stats.size
+                    });
+                    fs.createReadStream(path).pipe(res);
+                    console.log("db proc package OK");
+                }
+            });
         }
     });
 
