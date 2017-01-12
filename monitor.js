@@ -17,7 +17,7 @@ monitor.get = function (req, res, next) {
         return next();
     }
     name = req.params.name;
-    filepath = 'G:/Electromble@xiaoan/AppServer/app/' + name;///var/ftp/home/
+    filepath = '/var/ftp/home/' + name;//
     fs.stat(filepath, function (error, stats) {
         if (error) {
             console.log("file " +filepath + "not found");
