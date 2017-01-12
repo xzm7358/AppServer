@@ -25,8 +25,8 @@ monitor.get = function (req, res, next) {
         } else {
             console.log("file exists");
             res.set({
-                'Content-Type': 'application/vnd.android.package-archive',
-                'Content-Disposition': 'attachment; filename=package',
+                'Content-Type': 'audio/amr',
+                'Content-Disposition': 'attachment; filename='+name,
                 'Content-Length': stats.size
             });
             fs.createReadStream(filepath).pipe(res);
