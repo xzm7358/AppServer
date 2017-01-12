@@ -3,9 +3,8 @@
  */
 
 var package = exports;
-var mysql = require('mysql');
 var fs = require('fs');
-var config = require('./config.json');
+var dbhandler= require('./dbhandler');
 
 package.get = function (req, res, next) {
     console.log("GET ", req.url);
@@ -18,16 +17,14 @@ package.get = function (req, res, next) {
     else if (( 'android' === type)||('0' === type) || undefined === type) {
         selectsql = 'SELECT * from AppPackage where type = 0 order by id desc limit 1';
     }
-    var connnection = mysql.createConnection(config.mysql);
-    connnection.connect();
-    connnection.query(selectsql, function (error , result) {
-        connnection.end();
+
+    dbhandler(selectsql, function (error , result) {
         if (error)
         {
             console.log('[SELECT ERROR - ', error.message);
             res.send({code:101});
         }
-        else if (res.length === 0)
+        else if (result.length === 0)
         {
             console.log('no data in database');
             res.send({code: 101});

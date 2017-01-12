@@ -15,7 +15,8 @@
     "host": "test.xiaoan110.com",
     "user": "eelink",
     "password": "eelink",
-    "database": "gps"
+    "database": "gps",
+    "multipleStatements" : true
   },
   "device_http_options":{
     "host": "test.xiaoan110.com",

@@ -1,8 +1,7 @@
 /**
  * Created by lc on 2016-12-28.
  */
-var mysql = require('mysql');
-var config = require('./config.json');
+var dbhandler = require('./dbhandler');
 var itinerary = exports;
 
 itinerary.get = function(req, res, next) {
@@ -38,10 +37,8 @@ itinerary.get = function(req, res, next) {
         selectsql = 'SELECT * FROM ' + 'itinerary_' + imei + ' WHERE '+ 'starttime >= ' + start + ' AND endtime <= ' + end;
     }
     console.log(selectsql);
-    var connnection = mysql.createConnection(config.mysql);
-    connnection.connect();
-    connnection.query(selectsql, function (starterr, startresult){
-        connnection.end();
+
+    dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
             console.log('[SELECT ERROR - ', starterr.message);

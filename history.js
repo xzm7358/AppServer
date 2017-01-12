@@ -1,9 +1,8 @@
 /**
  * Created by jk on 2016-12-28.
  */
-var mysql = require('mysql');
 var history = exports;
-var config = require('./config.json');
+var dbhandler = require('./dbhandler');
 
 history.get = function(req, res, next) {
     var start;
@@ -40,10 +39,8 @@ history.get = function(req, res, next) {
         selectsql = 'SELECT * FROM ' + 'gps_' + imei + ' WHERE '+ 'timestamp' + ' BETWEEN ' + start + ' AND ' + end;
     }
     console.log(selectsql);
-    var connnection = mysql.createConnection(config.mysql);
-    connnection.connect();
-    connnection.query(selectsql, function (starterr, startresult){
-        connnection.end();
+
+    dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
             console.log('[SELECT ERROR - ', starterr.message);

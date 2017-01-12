@@ -3,8 +3,8 @@
  */
 TopClient = require('topSdk').ApiClient;
 var mysql = require('mysql');
-var callAlarm = require('./alarm')
-var config = require('./config.json');
+var callAlarm = require('./alarm');
+var dbhandler = require('./dbhandler');
 var telephone = exports;
 var telnumber = [
     "01053912804",
@@ -59,10 +59,8 @@ telephone.put = function(req, res, next) {
 
     var selectsql = 'select * from imei2Telnumber where imei = \''+ imei + '\'';
     console.log(selectsql);
-    var connnection = mysql.createConnection(config.mysql);
-    connnection.connect();
-    connnection.query(selectsql, function (starterr, startresult){
-        connnection.end();
+
+    dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
             console.log('[SELECT ERROR - ', starterr.message);
@@ -85,11 +83,7 @@ telephone.put = function(req, res, next) {
 
         //因为 nodejs 有回调的函数非阻塞，异步执行，所以这个地方应该嵌套执行
         selectsql = 'update imei2Telnumber set CallNumber = \'' + telnumber[caller] + '\'where imei = \''+imei+'\'';
-        console.log(selectsql);
-        connnection = mysql.createConnection(config.mysql);
-        connnection.connect();
-        connnection.query(selectsql, function (starterr, startresult) {
-            connnection.end();
+        dbhandler(selectsql, function (starterr, startresult) {
             if (starterr) {
                 console.log('[SELECT ERROR - ', starterr.message);
                 res.send({code: 101});
@@ -141,9 +135,7 @@ telephone.post = function(req, res, next) {
 
     var selectsql = 'replace into imei2Telnumber(imei,Telnumber) values(\'' + imei + '\',\'' + telephone + '\')';
     console.log(selectsql);
-    var connnection = mysql.createConnection(config.mysql);
-    connnection.connect();
-    connnection.query(selectsql, function (starterr, startresult){
+    dbhandler(selectsql, function (starterr, startresult){
         if (starterr) {
             console.log('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
@@ -175,9 +167,7 @@ telephone.get = function(req, res, next) {
 
     var selectsql = 'select * from imei2Telnumber where imei = \''+imei+'\'';
     console.log(selectsql);
-    var connnection = mysql.createConnection(config.mysql);
-    connnection.connect();
-    connnection.query(selectsql, function (starterr, startresult){
+    dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
             console.log('[SELECT ERROR - ', starterr.message);
@@ -227,9 +217,7 @@ telephone.del = function(req, res, next) {
 
     var selectsql = 'delete from imei2Telnumber where imei = \'' + imei + '\'';
     console.log(selectsql);
-    var connnection = mysql.createConnection(config.mysql);
-    connnection.connect();
-    connnection.query(selectsql, function (starterr, startresult){
+    dbhandler(selectsql, function (starterr, startresult){
         if (starterr) {
             console.log('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
