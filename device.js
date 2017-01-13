@@ -17,16 +17,16 @@ device.post = function (req, res, next) {
     else
     {
         var transdata = JSON.stringify(req.body);
-        console.log('transdata:', transdata);
+        console.log('app2dev:', transdata);
         var requset = http.request(config.device_http_options, function (response) {
             if (response.statusCode === 200) {
-                var body = "";
+                var bodydata = "";
                 response.on('data', function (data) {
-                    body += data;
-		});
-		response.on('end', function () {
-                    console.log('json:', JSON.parse(body));
-                    res.send(200, JSON.parse(body));
+                    bodydata += data;
+                });
+                response.on('end', function () {
+                    res.send(JSON.parse(bodydata));
+                    console.log('dev2app:', bodydata);
                 });
             }
             else {

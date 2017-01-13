@@ -1,7 +1,7 @@
 /**
  * Created by zzs on 2017/1/12.
  */
-// const config = require("./config.json");
+
 var monitor = exports;
 var fs = require('fs');
 
@@ -21,7 +21,7 @@ monitor.get = function (req, res, next) {
             res.send({code: 101});
         } else {
             console.log("file exists");
-            res.set({
+            res.sendfile({
                 'Content-Type': 'audio/amr',
                 'Content-Disposition': 'attachment; filename='+name,
                 'Content-Length': stats.size
