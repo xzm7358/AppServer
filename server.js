@@ -25,7 +25,7 @@ var setup_server = function (app) {
   }
 
   // Middleware
-  app.use(plugins.acceptParser(app.acceptable));
+  // app.use(plugins.acceptParser(app.acceptable));
   app.use(plugins.queryParser());
   app.use(plugins.bodyParser());
   // Routes
@@ -50,8 +50,8 @@ var setup_server = function (app) {
   var device = require('./device');
   app.post('/v1/device', device.post);
 
-  var monitor = require('./monitor');
-  app.get('/v1/monitor/:name', monitor.get);
+  var record = require('./record');
+  app.get('/v1/record', record.get);
 }
 
 // Now, setup both servers in one step

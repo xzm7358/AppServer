@@ -7,7 +7,7 @@ var config = require('./config.json');
 var http = require('http');
 
 device.post = function (req, res, next) {
-    console.log('POST '+ req.url);
+    console.log('POST ', req.url);
     res.contentType = 'json';
     if ( !req.body )
     {
@@ -25,7 +25,7 @@ device.post = function (req, res, next) {
                     bodydata += data;
                 });
                 response.on('end', function () {
-                    res.send(JSON.parse(bodydata));
+                    res.send(String(bodydata));
                     console.log('dev2app:', bodydata);
                 });
             }
