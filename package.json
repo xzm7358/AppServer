@@ -21,7 +21,8 @@
     "cookie-parser": "^1.4.3",
     "mysql": "^2.12.0",
     "restify": "^4.3.0",
-    "restify-plugins": "1.4.0"
+    "restify-plugins": "1.4.0",
+    "restify-url-semver": "1.0.1"
   },
   "engines": {
     "node": "4.x"
