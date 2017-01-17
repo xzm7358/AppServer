@@ -16,7 +16,12 @@ var https_options = {
 };
 
 const https_server = restify.createServer(https_options);
-
+const acceptable = ['application/json',
+    'text/plain',
+    'application/octet-stream',
+    'application/javascript',
+    'audio/mp3',
+    'audio/AMR'];
 
 // Put any routing, response, etc. logic here. This allows us to define these functions
 // only once, and it will be re-used on both the HTTP and HTTPs servers
@@ -25,7 +30,7 @@ var setup_server = function (app) {
         res.send('I see you ' + req.params.name);
     }
     // Middleware
-    // app.use(plugins.acceptParser(app.acceptable));
+    app.use(plugins.acceptParser(acceptable));
     app.use(plugins.queryParser());
     app.use(plugins.bodyParser());
     // Routes

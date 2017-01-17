@@ -6,6 +6,8 @@ var device = exports;
 var config = require('./config.json');
 var http = require('http');
 var logger = require('./log');
+var redis = require('redis');
+
 device.post = function (req, res, next) {
     logger.log('logFile').info('POST ', req.url);
     res.contentType = 'json';
