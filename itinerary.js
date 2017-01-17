@@ -1,15 +1,13 @@
 /**
  * Created by lc on 2016-12-28.
  */
-var mysql = require('mysql');
+var dbhandler = require('./dbhandler');
 var itinerary = exports;
-
+var logger = require('./log');
 itinerary.get = function(req, res, next) {
-    var start;
-    var end;
     var selectsql;
 
-    console.log('GET %s', req.url);
+    logger.log('logFile').info('GET %s', req.url);
     res.contentType = 'json';
 
     if(!req.params.hasOwnProperty('imei')){
@@ -21,38 +19,31 @@ itinerary.get = function(req, res, next) {
         res.send({code: 101});
         return next();
     }
-    console.log('get imei: '+ imei);
+    logger.log('logFile').info('get imei: '+ imei);
 
     if(!req.query.hasOwnProperty('start')){
         selectsql = 'SELECT itinerary FROM object WHERE imei = \''+ imei + '\'';
     }
     else{
-        start = req.query.start;
+        var start = req.query.start;
         if(!req.query.hasOwnProperty('end')){
-            end =  start + 86400 - (start % 86400);
+            var end =  start + 86400 - (start % 86400);
         }
         else {
             end = req.query.end;
         }
         selectsql = 'SELECT * FROM ' + 'itinerary_' + imei + ' WHERE '+ 'starttime >= ' + start + ' AND endtime <= ' + end;
     }
-    console.log(selectsql);
-    var connnection = mysql.createConnection({
-        host : 'test.xiaoan110.com',
-        user : 'eelink',
-        password: 'eelink',
-        database: 'gps',
-    });
-    connnection.connect();
-    connnection.query(selectsql, function (starterr, startresult){
-        connnection.end();
+    logger.log('logFile').info('selectsql:' + selectsql);
+
+    dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
-            console.log('[SELECT ERROR - ', starterr.message);
+            logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
         }
         else if(startresult.length === 0){
-            console.log('no data in result');
+            logger.log('logFile').error('no data in result');
             res.send({code: 101});
         }
         else{
@@ -84,7 +75,7 @@ itinerary.get = function(req, res, next) {
                 iItinerary.miles = startresult[0].itinerary;
                 itinerary.push(iItinerary);
             }
-            console.log('db proc OK');
+            logger.log('logFile').info('db proc OK');
             res.send({itinerary: itinerary});
         }
     });

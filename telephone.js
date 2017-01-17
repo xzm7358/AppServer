@@ -3,6 +3,10 @@
  */
 TopClient = require('topSdk').ApiClient;
 var mysql = require('mysql');
+var callAlarm = require('./alarm');
+var dbhandler = require('./dbhandler');
+var logger = require('./log');
+
 var telephone = exports;
 var telnumber = [
     "01053912804",
@@ -18,7 +22,7 @@ var telnumber = [
     "051482043274",
 ];
 telephone.put = function(req, res, next) {
-    console.log('PUT %s', req.url);
+    logger.log('logFile').info('PUT %s', req.url);
     res.contentType = 'json';
 
     if(!req.params.hasOwnProperty('imei')){
@@ -30,7 +34,7 @@ telephone.put = function(req, res, next) {
         res.send({code: 101});
         return next();
     }
-    console.log('get imei: '+ imei);
+    logger.log('logFile').info('get imei: '+ imei);
 
     var arr = [];
     req.on("data",function(data){
@@ -42,87 +46,52 @@ telephone.put = function(req, res, next) {
         req.body = ret;
     });
     if(!req.body.hasOwnProperty('caller')) {
-        console.log('no caller');
+        logger.log('logFile').error('no caller in the url');
         res.send({code: 101});
         return next();
     }
     var caller = req.body['caller'];
     if(caller >= 10 || caller < 0 )
     {
-        console.log('caller range is too large: ' + caller);
+        logger.log('logFile').error('caller range is too large: ' + caller);
         res.send({code: 101});
         return next();
     }
-    console.log('get caller: ' + telnumber[caller]);
+    logger.log('logFile').info('get caller: ' + telnumber[caller]);
 
     var selectsql = 'select * from imei2Telnumber where imei = \''+ imei + '\'';
-    console.log(selectsql);
-    var connnection = mysql.createConnection({
-        host : 'test.xiaoan110.com',
-        user : 'eelink',
-        password: 'eelink',
-        database: 'gps',
-    });
-    connnection.connect();
-    connnection.query(selectsql, function (starterr, startresult){
-        connnection.end();
+    logger.log('logFile').info(selectsql);
+
+    dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
-            console.log('[SELECT ERROR - ', starterr.message);
+            logger.log('logFile').error('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
             return next();
         }
         if(startresult.length === 0) {
-            console.log('startresult.length = ' + startresult.length);
+            logger.log('logFile').error('startresult.length = ' + startresult.length);
             res.send({code: 101});
             return next();
         }
         if(!startresult[0].hasOwnProperty('Telnumber')) {
-            console.log('no telnumber in result ');
+            logger.log('logFile').error('no telnumber in result.');
             res.send({code: 101});
             return next();
         }
         var telephone = startresult[0].Telnumber;
-        console.log('test call: '+ telephone + ' ' + telnumber[caller]);
-        var client = new TopClient({
-            'appkey': '23499944',
-            'appsecret': 'ee15cc89c463c7ce775569e6e05a4ec2',
-            'REST_URL': 'http://gw.api.taobao.com/router/rest?'
-        });
-        client.execute('alibaba.aliqin.fc.tts.num.singlecall', {
-            'extend':'12345',
-            'tts_param':'{\"AckNum\":\"123456\"}',
-            'called_num': telephone,
-            'called_show_num': telnumber[caller],
-            'tts_code':'TTS_25315181'
-        }, function(error, response) {
-            if (!error) {
-                console.log(response);
-            }
-            else {
-                console.log(error);
-                res.send({code: 101});
-                return next();
-            }
-        })
+        logger.log('logFile').info('test call: '+ telephone + ' ' + telnumber[caller]);
+        callAlarm.put(telnumber[caller], telephone);
+
         //因为 nodejs 有回调的函数非阻塞，异步执行，所以这个地方应该嵌套执行
         selectsql = 'update imei2Telnumber set CallNumber = \'' + telnumber[caller] + '\'where imei = \''+imei+'\'';
-        console.log(selectsql);
-        connnection = mysql.createConnection({
-            host : 'test.xiaoan110.com',
-            user : 'eelink',
-            password: 'eelink',
-            database: 'gps',
-        });
-        connnection.connect();
-        connnection.query(selectsql, function (starterr, startresult) {
-            connnection.end();
+        dbhandler(selectsql, function (starterr, startresult) {
             if (starterr) {
-                console.log('[SELECT ERROR - ', starterr.message);
+                logger.log('logFile').error('[SELECT ERROR - ', starterr.message);
                 res.send({code: 101});
             }
             else {
-                console.log('db proc OK');
+                logger.log('logFile').error('db proc OK');
                 res.send({code: 0});
             }
         });
@@ -132,21 +101,21 @@ telephone.put = function(req, res, next) {
 }
 
 telephone.post = function(req, res, next) {
-    console.log('POST %s', req.url);
+    logger.log('logFile').info('POST %s', req.url);
     res.contentType = 'json';
 
     if(!req.params.hasOwnProperty('imei')){
-        console.log('no imei ');
+        logger.log('logFile').error('no imei ');
         res.send({code: 101});
         return next();
     }
     var imei = req.params.imei;
     if(imei.length != 15) {
-        console.log('imei not correct: '+ imei);
+        logger.log('logFile').error('imei not correct: '+ imei);
         res.send({code: 101});
         return next();
     }
-    console.log('get imei: '+ imei);
+    logger.log('logFile').error('get imei: '+ imei);
 
     var arr = [];
     req.on("data",function(data){
@@ -159,84 +128,67 @@ telephone.post = function(req, res, next) {
     });
     if(!req.body.hasOwnProperty('telephone'))
     {
-        console.log('no telephon');
+        logger.log('logFile').error('no telephon');
         res.send({code: 101});
         return next();
     }
     var telephone = req.body.telephone;
-    console.log('telephon: ' + telephone);
+    logger.log('logFile').info('telephon: ' + telephone);
 
     var selectsql = 'replace into imei2Telnumber(imei,Telnumber) values(\'' + imei + '\',\'' + telephone + '\')';
-    console.log(selectsql);
-    var connnection = mysql.createConnection({
-        host : 'test.xiaoan110.com',
-        user : 'eelink',
-        password: 'eelink',
-        database: 'gps',
-    });
-    connnection.connect();
-    connnection.query(selectsql, function (starterr, startresult){
+    logger.log('logFile').info('selectsql:' + selectsql);
+    dbhandler(selectsql, function (starterr, startresult){
         if (starterr) {
-            console.log('[SELECT ERROR - ', starterr.message);
+            logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
         }
         else {
-            console.log('db proc OK');
+            logger.log('logFile').info('db proc OK');
             res.send({code: 0});
         }
     });
-
     return next();
 }
 
 telephone.get = function(req, res, next) {
-    console.log('GET %s', req.url);
+    logger.log('logFile').info('GET %s', req.url);
     res.contentType = 'json';
 
     if(!req.params.hasOwnProperty('imei')){
-        console.log('no imei');
+        logger.log('logFile').error('no imei');
         res.send({code: 101});
         return next();
     }
     var imei = req.params.imei;
     if(imei.length != 15) {
-        console.log('imei not correct: '+ imei);
+        logger.log('logFile').error('imei not correct: '+ imei);
         res.send({code: 101});
         return next();
     }
-    console.log('get imei: '+ imei);
+    logger.log('logFile').info('get imei: '+ imei);
 
     var selectsql = 'select * from imei2Telnumber where imei = \''+imei+'\'';
-    console.log(selectsql);
-    var connnection = mysql.createConnection({
-        host : 'test.xiaoan110.com',
-        user : 'eelink',
-        password: 'eelink',
-        database: 'gps',
-    });
-    connnection.connect();
-    connnection.query(selectsql, function (starterr, startresult){
+    logger.log('logFile').info('selectsql:'+ selectsql);
+    dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
-            console.log('[SELECT ERROR - ', starterr.message);
+            logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
         }
         else {
-            console.log(startresult);
             if(startresult.length === 0)
             {
-                console.log("no telnumber in database");
+                logger.log('logFile').error("no telnumber in database");
                 res.send({code: 101});
             }
             else{
                 if(startresult[0].hasOwnProperty('Telnumber')) {
-                    console.log('db proc OK');
-                    console.log("no telnumber in result");
+                    logger.log('logFile').info('db proc OK');
                     var telephone = startresult[0].Telnumber;
                     res.send({telephone: telephone});
                 }
                 else{
-                    console.log("no telnumber in result");
+                    logger.log('logFile').error("no telnumber in result");
                     res.send({code: 101});
                 }
             }
@@ -247,38 +199,31 @@ telephone.get = function(req, res, next) {
 }
 
 telephone.del = function(req, res, next) {
-    console.log('DELETE %s', req.url);
+    logger.log('logFile').info('DELETE %s', req.url);
     res.contentType = 'json';
 
     if(!req.params.hasOwnProperty('imei')){
-        console.log('no imei');
+        logger.log('logFile').error('no imei');
         res.send({code: 101});
         return next();
     }
     var imei = req.params.imei;
     if(imei.length != 15) {
-        console.log('imei not correct: '+ imei);
+        logger.log('logFile').error('imei not correct: '+ imei);
         res.send({code: 101});
         return next();
     }
-    console.log('get imei: '+ imei);
+    logger.log('logFile').info('get imei: '+ imei);
 
     var selectsql = 'delete from imei2Telnumber where imei = \'' + imei + '\'';
-    console.log(selectsql);
-    var connnection = mysql.createConnection({
-        host : 'test.xiaoan110.com',
-        user : 'eelink',
-        password: 'eelink',
-        database: 'gps',
-    });
-    connnection.connect();
-    connnection.query(selectsql, function (starterr, startresult){
+    logger.log('logFile').info(selectsql);
+    dbhandler(selectsql, function (starterr, startresult){
         if (starterr) {
-            console.log('[SELECT ERROR - ', starterr.message);
+            logger.log('logFile').error('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
         }
         else {
-            console.log('db proc OK');
+            logger.log('logFile').error('db proc OK');
             res.send({code: 0});
         }
     });
