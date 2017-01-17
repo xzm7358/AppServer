@@ -1,0 +1,31 @@
+{
+  "name": "server config",
+  "description": "serve for the server configuration",
+  "server": {
+    "http_options": {
+      "name": "Electromble@xiaoan",
+      "version": "1.0.0"
+    },
+    "https_options": {
+      "name": "Electromble@xiaoan"
+    }
+
+  },
+  "mysql": {
+    "host": "test.xiaoan110.com",
+    "user": "eelink",
+    "password": "eelink",
+    "database": "gps",
+    "multipleStatements" : true
+  },
+  "device_http_options":{
+    "host": "test.xiaoan110.com",
+    "port": 8082,
+    "path": "/v1/device",
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+
+}

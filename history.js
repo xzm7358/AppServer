@@ -1,67 +1,56 @@
 /**
  * Created by jk on 2016-12-28.
  */
-var mysql = require('mysql');
 var history = exports;
-
+var dbhandler = require('./dbhandler');
+var logger = require('./log');
 history.get = function(req, res, next) {
-    var start;
-    var end;
-    var selectsql;
 
-    console.log('GET %s', req.url);
+    logger.log('logFile').info('GET %s', req.url);
     res.contentType = 'json';
 
     if(!req.params.hasOwnProperty('imei')){
-        console.log('no imei');
+        logger.log('logFile').error('no imei');
         res.send({code: 101});
         return next();
     }
     var imei = req.params.imei;
     if(imei.length != 15) {
-        console.log('imei.length = '+ imei.length);
+        logger.log('logFile').error('imei.length = '+ imei.length);
         res.send({code: 101});
         return next();
     }
-    console.log('get imei: '+ imei);
+    logger.log('logFile').info('get imei: '+ imei);
 
     if(!req.query.hasOwnProperty('start')){
-        selectsql = 'SELECT * FROM ' + 'gps_' + imei + ' order by timestamp desc limit 1 ';
+        var selectsql = 'SELECT * FROM ' + 'gps_' + imei + ' order by timestamp desc limit 1 ';
     }
     else{
-        start = req.query.start;
+        var start = req.query.start;
         if(!req.query.hasOwnProperty('end')){
-            end =  start + 86400 - (start % 86400);
+            var end =  start + 86400 - (start % 86400);
         }
         else {
             end = req.query.end;
         }
         selectsql = 'SELECT * FROM ' + 'gps_' + imei + ' WHERE '+ 'timestamp' + ' BETWEEN ' + start + ' AND ' + end;
     }
+    logger.log('logFile').info('selectsql:' + selectsql);
 
-    console.log(selectsql);
-    var connnection = mysql.createConnection({
-        host : 'test.xiaoan110.com',
-        user : 'eelink',
-        password: 'eelink',
-        database: 'gps',
-    });
-    connnection.connect();
-    connnection.query(selectsql, function (starterr, startresult){
-        connnection.end();
+    dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
-            console.log('[SELECT ERROR - ', starterr.message);
+            logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
         }
         else if(startresult.length === 0){
-            console.log('startresult.length = ' + startresult.length);
+            logger.log('logFile').error('startresult.length = ' + startresult.length);
             res.send({code: 101});
         }
         else{
-            console.log('db proc OK');
+            logger.log('logFile').info('db proc OK');
             res.send({gps: startresult});
         }
     });
     return next();
-}
+};
