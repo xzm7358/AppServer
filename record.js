@@ -2,35 +2,38 @@
  * Created by zzs on 2017/1/12.
  */
 
-var monitor = exports;
+var record = exports;
 var fs = require('fs');
 var amrToMp3 = require('amrToMp3');
 var path = require('path');
-monitor.get = function (req, res, next) {
+var logger = require('./log');
+
+record.get = function (req, res, next) {
     console.log('GET %s', req.url);
-    // res.contentType = 'json';
-    if (!req.query.hasOwnProperty('name')) {
-        console.log('no name');
+    res.contentType = 'json';
+    if (!req.query.name) {
+        logger.log('logFile').error('record input: No name.');
         res.send({code:101});
         return next();
     }
     var name = req.query.name;
     var accept = '.amr';
-    console.log('accept:',req.headers.accept);
+    logger.log('logFile').info('accept:',req.headers.accept);
     if(req.headers.accept === 'audio/mp3'){
         accept = '.mp3';
     } else if ((req.headers.accept === 'audio/AMR')||(!req.headers.hasOwnProperty('accept'))) {
         accept = '.amr';
     }
-    console.log('accept:',accept);
+    logger.log('logFile').info('accept:',accept);
     var serverpath = '/var/ftp/home/';
-    var filepath = serverpath + name + '.amr';
+    var winpath = 'G:/Electromble@xiaoan/AppServer/'
+    var filepath = winpath + name + '.amr';
     fs.stat(filepath, function (error, stats) {
         if (error) {
-            console.log("file " +filepath + " not found");
+            logger.log('logFile').error("file " +filepath + " not found");
             res.send({code: 101});
         } else {
-            console.log("file exists");
+            logger.log('logFile').info("file exists");
             if (req.headers.accept === "audio/mp3") {
                 amrToMp3(filepath, './src/mp3/').then(function (data) {
                     console.log('data:',data);
@@ -40,11 +43,11 @@ monitor.get = function (req, res, next) {
                         'Content-Length': stats.size
                     });
                     filepath=path.join(__dirname,data);
-                    console.log('path:',filepath);
+                    logger.log('logFile').info('path:',filepath);
                     fs.createReadStream(filepath).pipe(res);
-                    console.log("monitor transform OK");
+                    logger.log('logFile').info("monitor transform OK");
                 }).catch(function (error) {
-                    console.log('error:',error);
+                    logger.log('logFile').fatal('error:',error);
                     res.send({code:101});
                 })
             } else {
@@ -54,7 +57,7 @@ monitor.get = function (req, res, next) {
                     'Content-Length': stats.size
                 });
                 fs.createReadStream(filepath).pipe(res);
-                console.log("monitor transform OK");
+                logger.info("monitor transform OK");
             }
 
         }

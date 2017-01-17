@@ -5,13 +5,13 @@ var version = exports;
 var mysql = require('mysql');
 var dbhandler = require('./dbhandler');
 var fs = require('fs');
-
+var logger = require('./log');
 version.get = function(req , res, next) {
     var selectsql;
-    console.log("GET ", req.url);
+    logger.log('logFile').info("GET ", req.url);
     res.contentType = 'json';
     var type = req.query.type;
-    console.log('type: ', type);
+    logger.log('logFile').info('type: ', type);
     if (( 'ios' === type)||('1' === type))
     {
         selectsql = 'SELECT * from AppPackage where type = 1 order by id desc limit 1';
@@ -20,18 +20,18 @@ version.get = function(req , res, next) {
     {
         selectsql = 'SELECT * from AppPackage where type = 0 order by id desc limit 1';
     }
-    console.log(selectsql);
+    logger.log('logFile').info(selectsql);
     dbhandler(selectsql, function (error, result) {
         if (error) {
-            console.log('[SELECT ERROR - ', error.message);
+            logger.log('logFile').fatal('[SELECT ERROR - ', error.message);
             res.send({code: 101});
         } else if(result.length === 0) {
-            console.log('no data in database');
+            logger.log('logFile').error('no data in database');
             res.send({code:101});
         } else {
             var app_path = './app/' + result[0].fileName;
             var size = (fs.statSync(app_path).size / (1024*1024)).toFixed(2);
-            console.log('db AppPackge info OK');
+            logger.log('logFile').info('db AppPackge info OK');
             res.send({
                 versionName:result[0].versionName,
                 versionCode:result[0].versionCode,

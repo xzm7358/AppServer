@@ -3,7 +3,7 @@
  */
 
 TopClient = require('topSdk').ApiClient;
-
+var logger = require('./log');
 var alarm = exports;
 
 alarm.put = function(callnumber, telephone){
@@ -21,8 +21,8 @@ alarm.put = function(callnumber, telephone){
             'tts_code': 'TTS_25315181'
         }, function (error, response) {
             if (!error)
-                console.log(response);
+                logger.log('logFile').info('response:' + response);
             else
-                console.log(error);
+                logger.log('logFile').error(error);
         })
 };

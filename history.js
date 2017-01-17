@@ -3,24 +3,24 @@
  */
 var history = exports;
 var dbhandler = require('./dbhandler');
-
+var logger = require('./log');
 history.get = function(req, res, next) {
 
-    console.log('GET %s', req.url);
+    logger.log('logFile').info('GET %s', req.url);
     res.contentType = 'json';
 
     if(!req.params.hasOwnProperty('imei')){
-        console.log('no imei');
+        logger.log('logFile').error('no imei');
         res.send({code: 101});
         return next();
     }
     var imei = req.params.imei;
     if(imei.length != 15) {
-        console.log('imei.length = '+ imei.length);
+        logger.log('logFile').error('imei.length = '+ imei.length);
         res.send({code: 101});
         return next();
     }
-    console.log('get imei: '+ imei);
+    logger.log('logFile').info('get imei: '+ imei);
 
     if(!req.query.hasOwnProperty('start')){
         var selectsql = 'SELECT * FROM ' + 'gps_' + imei + ' order by timestamp desc limit 1 ';
@@ -35,20 +35,20 @@ history.get = function(req, res, next) {
         }
         selectsql = 'SELECT * FROM ' + 'gps_' + imei + ' WHERE '+ 'timestamp' + ' BETWEEN ' + start + ' AND ' + end;
     }
-    console.log(selectsql);
+    logger.log('logFile').info('selectsql:' + selectsql);
 
     dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
-            console.log('[SELECT ERROR - ', starterr.message);
+            logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
         }
         else if(startresult.length === 0){
-            console.log('startresult.length = ' + startresult.length);
+            logger.log('logFile').error('startresult.length = ' + startresult.length);
             res.send({code: 101});
         }
         else{
-            console.log('db proc OK');
+            logger.log('logFile').info('db proc OK');
             res.send({gps: startresult});
         }
     });

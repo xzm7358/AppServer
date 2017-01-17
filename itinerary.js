@@ -3,11 +3,11 @@
  */
 var dbhandler = require('./dbhandler');
 var itinerary = exports;
-
+var logger = require('./log');
 itinerary.get = function(req, res, next) {
     var selectsql;
 
-    console.log('GET %s', req.url);
+    logger.log('logFile').info('GET %s', req.url);
     res.contentType = 'json';
 
     if(!req.params.hasOwnProperty('imei')){
@@ -19,7 +19,7 @@ itinerary.get = function(req, res, next) {
         res.send({code: 101});
         return next();
     }
-    console.log('get imei: '+ imei);
+    logger.log('logFile').info('get imei: '+ imei);
 
     if(!req.query.hasOwnProperty('start')){
         selectsql = 'SELECT itinerary FROM object WHERE imei = \''+ imei + '\'';
@@ -34,16 +34,16 @@ itinerary.get = function(req, res, next) {
         }
         selectsql = 'SELECT * FROM ' + 'itinerary_' + imei + ' WHERE '+ 'starttime >= ' + start + ' AND endtime <= ' + end;
     }
-    console.log(selectsql);
+    logger.log('logFile').info('selectsql:' + selectsql);
 
     dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
-            console.log('[SELECT ERROR - ', starterr.message);
+            logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
         }
         else if(startresult.length === 0){
-            console.log('no data in result');
+            logger.log('logFile').error('no data in result');
             res.send({code: 101});
         }
         else{
@@ -75,7 +75,7 @@ itinerary.get = function(req, res, next) {
                 iItinerary.miles = startresult[0].itinerary;
                 itinerary.push(iItinerary);
             }
-            console.log('db proc OK');
+            logger.log('logFile').info('db proc OK');
             res.send({itinerary: itinerary});
         }
     });

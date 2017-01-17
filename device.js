@@ -5,19 +5,19 @@
 var device = exports;
 var config = require('./config.json');
 var http = require('http');
-
+var logger = require('./log');
 device.post = function (req, res, next) {
-    console.log('POST ', req.url);
+    logger.log('logFile').info('POST ', req.url);
     res.contentType = 'json';
     if ( !req.body )
     {
-        console.log('error');
+        logger.log('logFile').error('body empty!');
         res.send({code:100});
     }
     else
     {
         var transdata = JSON.stringify(req.body);
-        console.log('app2dev:', transdata);
+        logger.log('logFile').info('app2dev:', transdata);
         var requset = http.request(config.device_http_options, function (response) {
             if (response.statusCode === 200) {
                 var bodydata = "";
@@ -26,7 +26,7 @@ device.post = function (req, res, next) {
                 });
                 response.on('end', function () {
                     res.send(String(bodydata));
-                    console.log('dev2app:', bodydata);
+                    logger.log('logFile').info('dev2app:', bodydata);
                 });
             }
             else {

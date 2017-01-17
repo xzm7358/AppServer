@@ -5,10 +5,9 @@
 var package = exports;
 var fs = require('fs');
 var dbhandler= require('./dbhandler');
-
+var logger = require('./log');
 package.get = function (req, res, next) {
-    console.log("GET ", req.url);
-
+    logger.log('logFile').info("GET ", req.url);
     var type = req.query.type;
     var selectsql;
     if (( 'ios' === type)||('1' === type)) {
@@ -21,20 +20,20 @@ package.get = function (req, res, next) {
     dbhandler(selectsql, function (error , result) {
         if (error)
         {
-            console.log('[SELECT ERROR - ', error.message);
+            logger.log('logFile').fatal('[SELECT ERROR - ', error.message);
             res.send({code:101});
         }
         else if (result.length === 0)
         {
-            console.log('no data in database');
+            logger.log('logFile').error('no data in database');
             res.send({code: 101});
         }
         else {
             var path = './app/' + result[0].fileName;
-            console.log("fileName:",result[0].fileName);
+            logger.log('logFile').info("fileName:",result[0].fileName);
             fs.stat(path, function (error, stats) {
                 if (error) {
-                    console.log("file " +path + "not found");
+                    logger.log('logFile').error("file " +path + "not found");
                     res.send({code: 101});
                 }
                 else {
@@ -44,7 +43,7 @@ package.get = function (req, res, next) {
                         'Content-Length': stats.size
                     });
                     fs.createReadStream(path).pipe(res);
-                    console.log("db proc package OK");
+                    logger.log('logFile').info("db proc package OK");
                 }
             });
         }
