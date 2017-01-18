@@ -2,11 +2,11 @@
  * Created by zzs on 2017/1/3.
  */
 
-var package = exports;
+var packagedownload = exports;
 var fs = require('fs');
 var dbhandler= require('./dbhandler');
 var logger = require('./log');
-package.get = function (req, res, next) {
+packagedownload.get = function (req, res, next) {
     logger.log('logFile').info("GET ", req.url);
     var type = req.query.type;
     var selectsql;

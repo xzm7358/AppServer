@@ -49,8 +49,8 @@ var setup_server = function (app) {
     var version = require('./version');
     app.get('/v1/version', version.get);
 
-    var package = require('./package');
-    app.get('/v1/package', package.get);
+    var packagedownload = require('./packagedownload');
+    app.get('/v1/package', packagedownload.get);
 
     var device = require('./device');
     app.post('/v1/device', device.post);

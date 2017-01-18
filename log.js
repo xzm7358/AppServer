@@ -17,11 +17,14 @@ exports.log = function (name) {
                     "category":"logFile",
                     "filename":"./logs/time",
                     "pattern":"-yyyy-MM-dd.log",
-                    "level":"ERROR",
                     "alwaysIncludePattern":true
                 }
             ],
-        "replaceConsole": true
+        "replaceConsole": true,
+        "levels":
+            {
+                "logFile":"ERROR"
+            }
     });
     var dataFilelog = log4js.getLogger(name);
     return dataFilelog;
