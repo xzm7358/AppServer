@@ -33,7 +33,11 @@ device.post = function (req, res, next) {
                 logger.log('logFile').error('No imei in the redis server.');
                 console.log('no imei');
                 res.send({code:100});
-            } else {
+            } else if(!getRes) {
+                logger.log('logFile').error('Data in the redis server is empty.');
+                res.send({code:101});
+            }
+            else {
                 var Url = url.parse('http://' + getRes);
                 config.device_http_options.host = Url.hostname;
                 config.device_http_options.port = Url.port;
