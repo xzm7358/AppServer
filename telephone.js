@@ -51,7 +51,7 @@ telephone.put = function(req, res, next) {
         return next();
     }
     var caller = req.body['caller'];
-    if(caller >= 10 || caller < 0 )
+    if(caller > 10 || caller < 0 )
     {
         logger.log('logFile').error('caller range is too large: ' + caller);
         res.send({code: 101});
