@@ -98,7 +98,7 @@ telephone.put = function(req, res, next) {
     });
 
     return next();
-}
+};
 
 telephone.post = function(req, res, next) {
     logger.log('logFile').info('POST %s', req.url);
@@ -151,8 +151,8 @@ telephone.post = function(req, res, next) {
 
 
     //兼容老版本的协议，telephone在URL中
-    if(req.params.hasOwnProperty('telephone')){
-        var phonenumber = req.params.telephone;
+    if(req.query.hasOwnProperty('telephone')){
+        var phonenumber = req.query.telephone;
 
         var selectsql = 'replace into imei2Telnumber(imei,Telnumber) values(\'' + imei + '\',\'' + phonenumber + '\')';
         logger.log('logFile').info('selectsql:' + selectsql);
@@ -168,7 +168,7 @@ telephone.post = function(req, res, next) {
         });
         return next();
     }
-}
+};
 
 telephone.get = function(req, res, next) {
     logger.log('logFile').info('GET %s', req.url);
@@ -216,7 +216,7 @@ telephone.get = function(req, res, next) {
     });
 
     return next();
-}
+};
 
 telephone.del = function(req, res, next) {
     logger.log('logFile').info('DELETE %s', req.url);
@@ -249,4 +249,4 @@ telephone.del = function(req, res, next) {
     });
 
     return next();
-}
+};
