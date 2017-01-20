@@ -22,7 +22,10 @@
     "mysql": "^2.12.0",
     "restify": "^4.3.0",
     "restify-plugins": "1.4.0",
-    "restify-url-semver": "1.0.1"
+    "restify-url-semver": "1.0.1",
+    "amrToMp3": "1.0.7",
+    "log4js": "1.1.0",
+    "redis": "2.6.5"
   },
   "engines": {
     "node": "4.x"
