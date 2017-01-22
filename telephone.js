@@ -149,6 +149,24 @@ telephone.post = function(req, res, next) {
         return next();
     });
 
+    if (req.body.hasOwnProperty('telephone')) {
+        var phoneNumber = req.body.telephone;
+
+        var selectsql = 'replace into imei2Telnumber(imei,Telnumber) values(\'' + imei + '\',\'' + phoneNumber + '\')';
+        logger.log('logFile').info('selectsql:' + selectsql);
+        dbhandler(selectsql, function (starterr, startresult){
+            if (starterr) {
+                logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
+                res.send({code: 101});
+            }
+            else {
+                logger.log('logFile').info('db proc OK');
+                res.send({code: 0});
+            }
+        });
+        return next();
+    }
+
 
     //兼容老版本的协议，telephone在URL中
     if(req.query.hasOwnProperty('telephone')){
@@ -168,6 +186,7 @@ telephone.post = function(req, res, next) {
         });
         return next();
     }
+    return next();
 };
 
 telephone.get = function(req, res, next) {
