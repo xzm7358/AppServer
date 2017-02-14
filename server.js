@@ -58,6 +58,14 @@ var setup_server = function (app) {
     var record = require('./record');
     app.get('/v1/record', record.get);
 
+    var user2dev = require('./user2dev');
+    app.get('/v1/user/:imei',user2dev.get());
+    app.post('/v1/user/:imei',user2dev.post());
+    app.del('/v1/user/:imei',user2dev.del());
+    app.put('/v1/user/:imei',user2dev.put());
+
+    var event = require('./event');
+    app.get('/v1/event/:imei',event.get());
 }
 // Now, setup both servers in one step
 setup_server(http_server);

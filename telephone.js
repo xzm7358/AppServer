@@ -41,7 +41,7 @@ telephone.put = function(req, res, next) {
         arr.push(data);
     });
     req.on("end",function(){
-        var data= Buffer.concat(arr).toString();
+        var data = Buffer.concat(arr).toString();
         var ret = JSON.parse(data);
         req.body = ret;
     });
