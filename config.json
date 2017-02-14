@@ -12,14 +12,14 @@
 
   },
   "mysql": {
-    "host": "test.xiaoan110.com",
+    "host": "localhost",
     "user": "eelink",
     "password": "eelink",
     "database": "gps",
     "multipleStatements" : true
   },
   "device_http_options":{
-    "host": "test.xiaoan110.com",
+    "host": "localhost",
     "port": 8082,
     "path": "/v1/device",
     "method": "POST",

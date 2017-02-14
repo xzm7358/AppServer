@@ -51,7 +51,7 @@ telephone.put = function(req, res, next) {
         return next();
     }
     var caller = req.body['caller'];
-    if(caller >= 10 || caller < 0 )
+    if(caller > 10 || caller < 0 )
     {
         logger.log('logFile').error('caller range is too large: ' + caller);
         res.send({code: 101});
@@ -98,7 +98,7 @@ telephone.put = function(req, res, next) {
     });
 
     return next();
-}
+};
 
 telephone.post = function(req, res, next) {
     logger.log('logFile').info('POST %s', req.url);
@@ -124,31 +124,70 @@ telephone.post = function(req, res, next) {
     req.on("end",function(){
         var data= Buffer.concat(arr).toString();
         var ret = JSON.parse(data);
-        req.body = ret;
+
+        if(!ret.hasOwnProperty('telephone'))
+        {
+            logger.log('logFile').error('no telephon');
+            res.send({code: 101});
+            return next();
+        }
+
+        var phonenumber = ret.telephone;
+
+        var selectsql = 'replace into imei2Telnumber(imei,Telnumber) values(\'' + imei + '\',\'' + phonenumber + '\')';
+        logger.log('logFile').info('selectsql:' + selectsql);
+        dbhandler(selectsql, function (starterr, startresult){
+            if (starterr) {
+                logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
+                res.send({code: 101});
+            }
+            else {
+                logger.log('logFile').info('db proc OK');
+                res.send({code: 0});
+            }
+        });
+        return next();
     });
-    if(!req.body.hasOwnProperty('telephone'))
-    {
-        logger.log('logFile').error('no telephon');
-        res.send({code: 101});
+
+    if (req.body.hasOwnProperty('telephone')) {
+        var phoneNumber = req.body.telephone;
+
+        var selectsql = 'replace into imei2Telnumber(imei,Telnumber) values(\'' + imei + '\',\'' + phoneNumber + '\')';
+        logger.log('logFile').info('selectsql:' + selectsql);
+        dbhandler(selectsql, function (starterr, startresult){
+            if (starterr) {
+                logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
+                res.send({code: 101});
+            }
+            else {
+                logger.log('logFile').info('db proc OK');
+                res.send({code: 0});
+            }
+        });
         return next();
     }
-    var telephone = req.body.telephone;
-    logger.log('logFile').info('telephon: ' + telephone);
 
-    var selectsql = 'replace into imei2Telnumber(imei,Telnumber) values(\'' + imei + '\',\'' + telephone + '\')';
-    logger.log('logFile').info('selectsql:' + selectsql);
-    dbhandler(selectsql, function (starterr, startresult){
-        if (starterr) {
-            logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
-            res.send({code: 101});
-        }
-        else {
-            logger.log('logFile').info('db proc OK');
-            res.send({code: 0});
-        }
-    });
+
+    //兼容老版本的协议，telephone在URL中
+    if(req.query.hasOwnProperty('telephone')){
+        var phonenumber = req.query.telephone;
+
+        var selectsql = 'replace into imei2Telnumber(imei,Telnumber) values(\'' + imei + '\',\'' + phonenumber + '\')';
+        logger.log('logFile').info('selectsql:' + selectsql);
+        dbhandler(selectsql, function (starterr, startresult){
+            if (starterr) {
+                logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
+                res.send({code: 101});
+            }
+            else {
+                logger.log('logFile').info('db proc OK');
+                res.send({code: 0});
+            }
+        });
+        return next();
+    }
     return next();
-}
+};
 
 telephone.get = function(req, res, next) {
     logger.log('logFile').info('GET %s', req.url);
@@ -196,7 +235,7 @@ telephone.get = function(req, res, next) {
     });
 
     return next();
-}
+};
 
 telephone.del = function(req, res, next) {
     logger.log('logFile').info('DELETE %s', req.url);
@@ -229,4 +268,4 @@ telephone.del = function(req, res, next) {
     });
 
     return next();
-}
+};
