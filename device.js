@@ -12,7 +12,7 @@ var url= require('url');
 device.post = function (req, res, next) {
     logger.log('logFile').info('POST ', req.url);
     res.contentType = 'json';
-    console.log("req.body:",req.body.imei);
+    // console.log("req.body:",req.body.imei);
     if ( !req.body )
     {
         logger.log('logFile').error('app2server body empty!');
@@ -26,7 +26,7 @@ device.post = function (req, res, next) {
 
         var client = redis.createClient(6379,'test.xiaoan110.com');
         client.on("error", function (err) {
-            console.log("Error: " + err);
+            logger.log('logFile').err("Error: ",err);
         });
         client.get(imei,function(getErr, getRes) {
             if (getErr) {
@@ -53,12 +53,17 @@ device.post = function (req, res, next) {
                         });
                     }
                     else {
+                        logger.log('logFile').err("ERROR: redis no response ");
                         res.send({code:100});
                     }
                 });
+
+                requset.on('error', function (reqerr) {
+                    logger.log('logFile').fatal('problem with request:' + reqerr.message);
+                    res.send({code:100})
+                })
                 requset.end(transdata);
             }
-
             client.quit();
         });
 
