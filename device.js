@@ -31,8 +31,7 @@ device.post = function (req, res, next) {
         client.get(imei,function(getErr, getRes) {
             if (getErr) {
                 logger.log('logFile').error('No imei in the redis server.');
-                console.log('no imei');
-                res.send({code:100});
+                res.send({code:101});
             } else if(!getRes) {
                 logger.log('logFile').error('Data in the redis server is empty.');
                 res.send({code:101});

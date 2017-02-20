@@ -24,7 +24,6 @@ var telnumber = [
 telephone.put = function(req, res, next) {
     logger.log('logFile').info('PUT %s', req.url);
     res.contentType = 'json';
-
     if(!req.params.hasOwnProperty('imei')){
         res.send({code: 101});
         return next();

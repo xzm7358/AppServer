@@ -2,12 +2,10 @@
  * Created by zzs on 2017/1/18.
  */
 var event = exports;
-
-var logger = require('./log');
 var dbhandler = require('./dbhandler');
 var logger = require('./log');
 event.get = function (req, res, next) {
-    logger.log('logFile').info('GET ',req.url);
+    logger.log('logFile').info('GET %s', req.url);
     res.contentType = 'json';
     if (!req.params.hasOwnProperty('imei')) {
         logger.log('logFile').error('event get url error: no imei');
@@ -20,11 +18,11 @@ event.get = function (req, res, next) {
     }
     logger.log('logFile').info('get imei: '+ imei);
     if (!req.query.hasOwnProperty('endAt')) {
-        var selectsql = 'SELECT * FROM ' + 'gps_' + imei + 'order by timestamp desc limit 20';
+        var selectsql = 'SELECT * FROM ' + 'gps_' + imei + ' order by timestamp desc limit 20';
     } else {
         var endAt = req.query.endAt;
         console.log('endAt:',endAt);
-        selectsql = 'SELECT * FROM ' + '(SELECT * FROM gps_' + imei + ' WHERE ' + 'timestamp <= ' + endAt +') order by timestamp desc limit 20';
+        selectsql = 'SELECT * FROM gps_' + imei + ' WHERE ' + 'timestamp <= ' + endAt +' order by timestamp desc limit 20';
     }	
     logger.log('logFile').info('selectsql:' + selectsql);
 
@@ -37,8 +35,8 @@ event.get = function (req, res, next) {
             res.send({code:101});
         } else {
             logger.log('logFile').info('db proc OK');
-             console.log('res:' + selectres);
-             res.send({event:selectres});
+            logger.log('logFile').info('res:' + selectres);
+            res.send({event:selectres});
         }
     });
     return next();
