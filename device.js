@@ -24,7 +24,7 @@ device.post = function (req, res, next) {
         var transdata = JSON.stringify(req.body);
         logger.log('logFile').info('app2dev:', transdata);
 
-        var client = redis.createClient(6379,'test.xiaoan110.com');
+        var client = redis.createClient(config.redis_cli.port,config.redis_cli.host);
         client.on("error", function (err) {
             logger.log('logFile').err("Error: ",err);
         });
