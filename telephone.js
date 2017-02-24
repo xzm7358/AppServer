@@ -24,7 +24,6 @@ var telnumber = [
 telephone.put = function(req, res, next) {
     logger.log('logFile').info('PUT %s', req.url);
     res.contentType = 'json';
-
     if(!req.params.hasOwnProperty('imei')){
         res.send({code: 101});
         return next();
@@ -41,7 +40,7 @@ telephone.put = function(req, res, next) {
         arr.push(data);
     });
     req.on("end",function(){
-        var data= Buffer.concat(arr).toString();
+        var data = Buffer.concat(arr).toString();
         var ret = JSON.parse(data);
         req.body = ret;
     });

@@ -49,8 +49,8 @@ var setup_server = function (app) {
     var version = require('./version');
     app.get('/v1/version', version.get);
 
-    var package = require('./package');
-    app.get('/v1/package', package.get);
+    var packagedownload = require('./packagedownload');
+    app.get('/v1/package', packagedownload.get);
 
     var device = require('./device');
     app.post('/v1/device', device.post);
@@ -58,6 +58,13 @@ var setup_server = function (app) {
     var record = require('./record');
     app.get('/v1/record', record.get);
 
+    var user2dev = require('./user2dev');
+    app.get('/v1/user/:tel',user2dev.get);
+    app.post('/v1/user/:tel',user2dev.post);
+    app.del('/v1/user/:tel',user2dev.del);
+
+    var event = require('./event');
+    app.get('/v1/event/:imei',event.get);
 }
 // Now, setup both servers in one step
 setup_server(http_server);

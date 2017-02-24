@@ -9,7 +9,7 @@ var path = require('path');
 var logger = require('./log');
 
 record.get = function (req, res, next) {
-    console.log('GET %s', req.url);
+    logger.log('logFile').info('GET %s', req.url);
     res.contentType = 'json';
     if (!req.query.name) {
         logger.log('logFile').error('record input: No name.');
@@ -26,8 +26,7 @@ record.get = function (req, res, next) {
     }
     logger.log('logFile').info('accept:',accept);
     var serverpath = '/var/ftp/home/';
-    var winpath = 'G:/Electromble@xiaoan/AppServer/'
-    var filepath = winpath + name + '.amr';
+    var filepath = serverpath + name + '.amr';
     fs.stat(filepath, function (error, stats) {
         if (error) {
             logger.log('logFile').error("file " +filepath + " not found");
@@ -36,7 +35,6 @@ record.get = function (req, res, next) {
             logger.log('logFile').info("file exists");
             if (req.headers.accept === "audio/mp3") {
                 amrToMp3(filepath, './src/mp3/').then(function (data) {
-                    console.log('data:',data);
                     res.set({
                         'Content-Type': 'application/octet-stream',
                         'Content-Disposition': 'attachment; filename='+path.basename(filepath, '.amr')+ '.mp3',
@@ -57,7 +55,7 @@ record.get = function (req, res, next) {
                     'Content-Length': stats.size
                 });
                 fs.createReadStream(filepath).pipe(res);
-                logger.info("monitor transform OK");
+                logger.log('logFile').info("monitor transform OK");
             }
 
         }
