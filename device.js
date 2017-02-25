@@ -12,7 +12,6 @@ var url= require('url');
 device.post = function (req, res, next) {
     logger.log('logFile').info('POST ', req.url);
     res.contentType = 'json';
-    // console.log("req.body:",req.body.imei);
     if ( !req.body )
     {
         logger.log('logFile').error('app2server body empty!');
@@ -25,6 +24,9 @@ device.post = function (req, res, next) {
         logger.log('logFile').info('app2dev:', transdata);
 
         var client = redis.createClient(config.redis_cli.port,config.redis_cli.host);
+        client.auth(config.redis_cli.pwd, function () {
+            logger.log('logFile').info("Password authentication");
+        })
         client.on("error", function (err) {
             logger.log('logFile').err("Error: ",err);
         });
