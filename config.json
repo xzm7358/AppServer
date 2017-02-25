@@ -28,8 +28,9 @@
     }
   },
   "redis_cli":{
-    "host": "localhost",
-    "port": 6379
+    "host":"innerredis.xiaoan110.com",
+    "port": 6379,
+    "pwd" :"Bbj4VzYmDTufJU8KPBP9FKj5"
   }
 
 }

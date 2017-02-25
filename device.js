@@ -12,7 +12,6 @@ var url= require('url');
 device.post = function (req, res, next) {
     logger.log('logFile').info('POST ', req.url);
     res.contentType = 'json';
-    // console.log("req.body:",req.body.imei);
     if ( !req.body )
     {
         logger.log('logFile').error('app2server body empty!');
@@ -23,50 +22,53 @@ device.post = function (req, res, next) {
         var imei = req.body.imei;
         var transdata = JSON.stringify(req.body);
         logger.log('logFile').info('app2dev:', transdata);
+        var RDS_OPTS = {auth_pass:config.redis_cli.pwd},
+            client = redis.createClient(config.redis_cli.port,config.redis_cli.host,RDS_OPTS);
 
-        var client = redis.createClient(config.redis_cli.port,config.redis_cli.host);
         client.on("error", function (err) {
-            logger.log('logFile').err("Error: ",err);
+            logger.log('logFile').error("Error: ",err);
         });
-        client.get(imei,function(getErr, getRes) {
-            if (getErr) {
-                logger.log('logFile').error('No imei in the redis server.');
-                res.send({code:101});
-            } else if(!getRes) {
-                logger.log('logFile').error('Data in the redis server is empty.');
-                res.send({code:101});
-            }
-            else {
-                var Url = url.parse('http://' + getRes);
-                config.device_http_options.host = Url.hostname;
-                config.device_http_options.port = Url.port;
+        client.on("connect", function () {
+            logger.log('logFile').info("get into the connect");
+            client.get(imei,function(getErr, getRes) {
+                if (getErr) {
+                    logger.log('logFile').error('No imei in the redis server.');
+                    res.send({code:101});
+                } else if(!getRes) {
+                    logger.log('logFile').error('Data in the redis server is empty.');
+                    res.send({code:101});
+                }
+                else {
+                    var Url = url.parse('http://' + getRes);
+                    config.device_http_options.host = Url.hostname;
+                    config.device_http_options.port = Url.port;
 
-                var requset = http.request(config.device_http_options, function (response) {
-                    if (response.statusCode === 200) {
-                        var bodydata = "";
-                        response.on('data', function (data) {
-                            bodydata += data;
-                        });
-                        response.on('end', function () {
-                            res.send(String(bodydata));
-                            logger.log('logFile').info('dev2app:', bodydata);
-                        });
-                    }
-                    else {
-                        logger.log('logFile').err("ERROR: redis no response ");
-                        res.send({code:100});
-                    }
-                });
+                    var requset = http.request(config.device_http_options, function (response) {
+                        if (response.statusCode === 200) {
+                            var bodydata = "";
+                            response.on('data', function (data) {
+                                bodydata += data;
+                            });
+                            response.on('end', function () {
+                                res.send(String(bodydata));
+                                logger.log('logFile').info('dev2app:', bodydata);
+                            });
+                        }
+                        else {
+                            logger.log('logFile').err("ERROR: redis no response ");
+                            res.send({code:100});
+                        }
+                    });
 
-                requset.on('error', function (reqerr) {
-                    logger.log('logFile').fatal('problem with request:' + reqerr.message);
-                    res.send({code:100})
-                })
-                requset.end(transdata);
-            }
-            client.quit();
-        });
-
+                    requset.on('error', function (reqerr) {
+                        logger.log('logFile').fatal('problem with request:' + reqerr.message);
+                        res.send({code:100})
+                    });
+                    requset.end(transdata);
+                }
+                client.quit();
+            });
+        })
     }
     return next();
 };
