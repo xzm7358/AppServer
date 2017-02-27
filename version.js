@@ -33,14 +33,13 @@ version.get = function(req , res, next) {
             if (!fs.existsSync('./app/')) {
                 fs.mkdirSync("./app/");
             }
-            var size;
             fs.stat(app_path,function (err,stats) {
                 if (err) {
                     logger.log('logFile').error('no App in the path:',app_path);
                     res.end({code:101});
                     return next();
                 } else {
-                    size = (stats.size / (1024*1024)).toFixed(2);
+                    var size = (stats.size / (1024*1024)).toFixed(2);
                     logger.log('logFile').info('db AppPackge info OK');
                     res.send({
                         versionName:result[0].versionName,
