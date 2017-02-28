@@ -1,0 +1,14 @@
+sudo: required
+language: node_js
+node_js:
+ - '4'
+
+env:
+ - CXX=g++-4.8
+services:
+ - msyql
+ - redis-server
+
+
+
+script: node server.js

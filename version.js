@@ -30,13 +30,24 @@ version.get = function(req , res, next) {
             res.send({code:101});
         } else {
             var app_path = './app/' + result[0].fileName;
-            var size = (fs.statSync(app_path).size / (1024*1024)).toFixed(2);
-            logger.log('logFile').info('db AppPackge info OK');
-            res.send({
-                versionName:result[0].versionName,
-                versionCode:result[0].versionCode,
-                changelog:result[0].changeLog,
-                packageSize:size + "MB"
+            if (!fs.existsSync('./app/')) {
+                fs.mkdirSync("./app/");
+            }
+            fs.stat(app_path,function (err,stats) {
+                if (err) {
+                    logger.log('logFile').error('no App in the path:',app_path);
+                    res.end({code:101});
+                    return next();
+                } else {
+                    var size = (stats.size / (1024*1024)).toFixed(2);
+                    logger.log('logFile').info('db AppPackge info OK');
+                    res.send({
+                        versionName:result[0].versionName,
+                        versionCode:result[0].versionCode,
+                        changelog:result[0].changeLog,
+                        packageSize:size + "MB"
+                    });
+                }
             });
         }
     })

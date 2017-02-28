@@ -19,8 +19,6 @@
     "multipleStatements" : true
   },
   "device_http_options":{
-    "host": "localhost",
-    "port": 8082,
     "path": "/v1/device",
     "method": "POST",
     "headers": {
