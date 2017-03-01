@@ -36,7 +36,28 @@ device.post = function (req, res, next) {
                     res.send({code:101});
                 } else if(!getRes) {
                     logger.log('logFile').error('Data in the redis server is empty.');
-                    res.send({code:101});
+
+                    var noResRequest = http.request(config.device_http_options, function (response) {
+                        if (response.statusCode === 200) {
+                            var bodydata = "";
+                            response.on('data', function (data) {
+                                bodydata += data;
+                            });
+                            response.on('end', function () {
+                                res.send(String(bodydata));
+                                logger.log('logFile').info('dev2app:', bodydata);
+                            });
+                        }
+                        else {
+                            logger.log('logFile').err("ERROR: redis no response ");
+                            res.send({code:100});
+                        }
+                    });
+                    noResRequest.on('error', function (reqerr) {
+                        logger.log('logFile').fatal('problem with request:' + reqerr.message);
+                        res.send({code:100})
+                    });
+                    noResRequest.end(transdata);
                 }
                 else {
                     var Url = url.parse('http://' + getRes);
