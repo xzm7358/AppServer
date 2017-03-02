@@ -10,3 +10,5 @@ services:
  - redis-server
 
 script: node server.js
+
+after_script: curl -i "test.xiaoan110.com:8083/v1/imeiData/865067021305209"
