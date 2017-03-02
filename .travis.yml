@@ -10,6 +10,7 @@ services:
  - redis-server
 before_script:
  - npm install topSdk
-script: node server.js
-
-after_script: curl -i "test.xiaoan110.com:8083/v1/imeiData/865067021305209"
+ - npm install pm2
+script:
+ - node server.js
+ - curl -i "test.xiaoan110.com:8083/v1/imeiData/865067021305209"
