@@ -29,7 +29,7 @@ deviceEvent.get = function (req, res, next) {
 
     if(!req.query.hasOwnProperty('start')&&!req.query.hasOwnProperty('end')){
         logger.log('logFile').info('no start or end parameter in the url');
-        var selectsql = 'SELECT time FROM log WHERE imei='+imei+' order by time desc limit 1';
+        var selectsql = 'SELECT * FROM log WHERE imei='+imei+' order by time desc limit 1';
     }
     else if(!req.query.hasOwnProperty('start')){
         logger.log('logFile').info('no start parameter in the url');
@@ -62,8 +62,9 @@ deviceEvent.get = function (req, res, next) {
             logger.log('logFile').info('select result from log success');
             for (var i = 0; i < selectres.length; i++) {
                 var eventReply = {};
-                eventReply.timestamp = selectres[i].time;
                 eventReply.event     = selectres[i].event;
+                eventReply.timestamp = new Date(selectres[i].time).getTime()/1000;
+                logger.log('logFile').info('timestamp:',eventReply.timestamp);
                 deviceEventReply.push(eventReply);
             }
             res.send(deviceEventReply);
