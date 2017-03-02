@@ -6,7 +6,7 @@ const plugins = require('restify-plugins');
 const fs = require('fs');
 const config = require('./config.json');
 
-const keys_dir = './cert/';
+// const keys_dir = './cert/';
 const http_server = restify.createServer(config.server.http_options);
 
 // var https_options = {
