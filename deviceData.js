@@ -40,31 +40,7 @@ deviceData.get = function (req, res, next) {
                 res.send({code: 101});
             } else if (!getRes) {
                 logger.log('logFile').error('Data in the redis server is empty.');
-
-                var noResRequest = http.request(config.device_http_options, function (response) {
-                    if (response.statusCode === 200) {
-                        var bodydata = "";
-                        response.on('data', function (data) {
-                            bodydata += data;
-                        });
-                        response.on('end', function () {
-                            res.send(String(bodydata));
-                            logger.log('logFile').info('dev2manager:', bodydata);
-                        });
-                    }
-                    else {
-                        logger.log('logFile').err("ERROR: redis no response ");
-                        res.send({code: 100});
-                    }
-                });
-                noResRequest.on('error', function (reqerr) {
-                    logger.log('logFile').fatal('problem with request:' + reqerr.message);
-                    res.send({code: 100})
-                });
-                noResRequest.on('timeout',function (err) {
-                    logger.log('logFile').fatal('problem with request timeout:' + err.message);
-                });
-                noResRequest.end();
+                res.send({code:109})
             }
             else {
                 var Url = url.parse('http://' + getRes);
@@ -80,8 +56,8 @@ deviceData.get = function (req, res, next) {
                             bodydata += data;
                         });
                         response.on('end', function () {
-                            res.send(String(bodydata));
-                            logger.log('logFile').info('dev2Manager:', bodydata);
+                            res.send(JSON.parse(bodydata));
+                            logger.log('logFile').info('dev2Manager:', JSON.parse(bodydata));
                         });
                     }
                     else {

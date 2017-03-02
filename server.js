@@ -66,15 +66,11 @@ var setup_server = function (app) {
     var event = require('./event');
     app.get('/v1/event/:imei',event.get);
 
-    var updownload = require('./updownload');
-    app.get('/v1/updownload/:imei', updownload.get);
-    app.post('/v1/updownload/:imei',updownload.post);
-
     var deviceEvent = require('./deviceEvent');
     app.get('/v1/deviceEvent/:imei', deviceEvent.get);
 
     var deviceData = require('./deviceData');
-    app.get('/v1/deviceData/:imei', deviceData.get);
+    app.get('/v1/imeiData/:imei', deviceData.get);
 
 
 }
