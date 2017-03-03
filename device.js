@@ -44,7 +44,7 @@ device.post = function (req, res, next) {
                                 bodydata += data;
                             });
                             response.on('end', function () {
-                                res.send(String(bodydata));
+                                res.send(JSON.parse(bodydata));
                                 logger.log('logFile').info('dev2app:', bodydata);
                             });
                         }
@@ -70,8 +70,9 @@ device.post = function (req, res, next) {
                                 bodydata += data;
                             });
                             response.on('end', function () {
-                                res.send(String(bodydata));
-                                logger.log('logFile').info('dev2app:', bodydata);
+                                logger.log('logFile').info('input:', bodydata);
+                                res.send(JSON.parse(bodydata));
+                                logger.log('logFile').info('dev2app:',bodydata);
                             });
                         }
                         else {
