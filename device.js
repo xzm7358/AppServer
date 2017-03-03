@@ -44,12 +44,12 @@ device.post = function (req, res, next) {
                                 bodydata += data;
                             });
                             response.on('end', function () {
-                                res.send(String(bodydata));
+                                res.send(JSON.parse(bodydata));
                                 logger.log('logFile').info('dev2app:', bodydata);
                             });
                         }
                         else {
-                            logger.log('logFile').err("ERROR: redis no response ");
+                            logger.log('logFile').err("ERROR: simcomServer no response ");
                             res.send({code:100});
                         }
                     });
@@ -63,7 +63,6 @@ device.post = function (req, res, next) {
                     var Url = url.parse('http://' + getRes);
                     config.device_http_options.host = Url.hostname;
                     config.device_http_options.port = Url.port;
-
                     var requset = http.request(config.device_http_options, function (response) {
                         if (response.statusCode === 200) {
                             var bodydata = "";
@@ -71,12 +70,13 @@ device.post = function (req, res, next) {
                                 bodydata += data;
                             });
                             response.on('end', function () {
-                                res.send(String(bodydata));
-                                logger.log('logFile').info('dev2app:', bodydata);
+                                logger.log('logFile').info('input:', bodydata);
+                                res.send(JSON.parse(bodydata));
+                                logger.log('logFile').info('dev2app:',bodydata);
                             });
                         }
                         else {
-                            logger.log('logFile').err("ERROR: redis no response ");
+                            logger.log('logFile').err("ERROR: simcomServer no response ");
                             res.send({code:100});
                         }
                     });

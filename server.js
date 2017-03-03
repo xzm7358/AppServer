@@ -65,6 +65,14 @@ var setup_server = function (app) {
 
     var event = require('./event');
     app.get('/v1/event/:imei',event.get);
+
+    var deviceEvent = require('./deviceEvent');
+    app.get('/v1/deviceEvent/:imei', deviceEvent.get);
+
+    var deviceData = require('./deviceData');
+    app.get('/v1/imeiData/:imei', deviceData.get);
+
+
 }
 // Now, setup both servers in one step
 setup_server(http_server);

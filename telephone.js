@@ -90,7 +90,7 @@ telephone.put = function(req, res, next) {
                 res.send({code: 101});
             }
             else {
-                logger.log('logFile').error('db proc OK');
+                logger.log('logFile').info('db proc OK');
                 res.send({code: 0});
             }
         });
@@ -104,7 +104,7 @@ telephone.post = function(req, res, next) {
     res.contentType = 'json';
 
     if(!req.params.hasOwnProperty('imei')){
-        logger.log('logFile').error('no imei ');
+        logger.log('logFile').error('no imei');
         res.send({code: 101});
         return next();
     }
@@ -114,7 +114,7 @@ telephone.post = function(req, res, next) {
         res.send({code: 101});
         return next();
     }
-    logger.log('logFile').error('get imei: '+ imei);
+    logger.log('logFile').info('get imei: '+ imei);
 
     var arr = [];
     req.on("data",function(data){
@@ -130,7 +130,6 @@ telephone.post = function(req, res, next) {
             res.send({code: 101});
             return next();
         }
-
         var phonenumber = ret.telephone;
 
         var selectsql = 'replace into imei2Telnumber(imei,Telnumber) values(\'' + imei + '\',\'' + phonenumber + '\')';
@@ -261,7 +260,7 @@ telephone.del = function(req, res, next) {
             res.send({code: 101});
         }
         else {
-            logger.log('logFile').error('db proc OK');
+            logger.log('logFile').info('db proc OK');
             res.send({code: 0});
         }
     });
