@@ -3,7 +3,8 @@
  */
 
 var device = exports;
-var config = require('./config.json');
+var Config = require('./config');
+var config = new Config();
 var http = require('http');
 var logger = require('./log');
 var redis = require('redis');
@@ -15,7 +16,7 @@ device.post = function (req, res, next) {
     if ( !req.body )
     {
         logger.log('logFile').error('app2server body empty!');
-        res.send({code:100});
+        res.send({code:102});
     }
     else
     {
@@ -27,6 +28,7 @@ device.post = function (req, res, next) {
 
         client.on("error", function (err) {
             logger.log('logFile').error("Error: ",err);
+            res.send({code:100});
         });
         client.on("connect", function () {
             logger.log('logFile').info("get into the connect");
@@ -36,7 +38,6 @@ device.post = function (req, res, next) {
                     res.send({code:101});
                 } else if(!getRes) {
                     logger.log('logFile').error('Data in the redis server is empty.');
-
                     var noResRequest = http.request(config.device_http_options, function (response) {
                         if (response.statusCode === 200) {
                             var bodydata = "";
@@ -50,12 +51,12 @@ device.post = function (req, res, next) {
                         }
                         else {
                             logger.log('logFile').err("ERROR: simcomServer no response ");
-                            res.send({code:100});
+                            res.send({code:106});
                         }
                     });
                     noResRequest.on('error', function (reqerr) {
                         logger.log('logFile').fatal('problem with request:' + reqerr.message);
-                        res.send({code:100})
+                        res.send({code:107})
                     });
                     noResRequest.end(transdata);
                 }
@@ -77,13 +78,13 @@ device.post = function (req, res, next) {
                         }
                         else {
                             logger.log('logFile').err("ERROR: simcomServer no response ");
-                            res.send({code:100});
+                            res.send({code:106});
                         }
                     });
 
                     requset.on('error', function (reqerr) {
                         logger.log('logFile').fatal('problem with request:' + reqerr.message);
-                        res.send({code:100})
+                        res.send({code:103})
                     });
                     requset.end(transdata);
                 }

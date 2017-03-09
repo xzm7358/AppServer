@@ -6,7 +6,8 @@
 var deviceData = exports;
 
 var logger = require('./log');
-var config = require('./config.json');
+var Config = require('./config');
+var config = new Config();
 var redis = require('redis');
 var url = require('url');
 var http = require('http');
@@ -22,7 +23,7 @@ deviceData.get = function (req, res, next) {
     var imei = req.params.imei;
     if (imei.length != 15) {
         logger.log('logFile').error('imei.length = ' + imei.length);
-        res.send({code: 101});
+        res.send({code: 103});
         return next();
     }
     logger.log('logFile').info('get imei: ' + imei);
@@ -62,7 +63,7 @@ deviceData.get = function (req, res, next) {
                     }
                     else {
                         logger.log('logFile').err("ERROR: simcom server no response ");
-                        res.send({code: 100});
+                        res.send({code: 106});
                     }
                 });
 
