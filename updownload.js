@@ -42,7 +42,7 @@ updownload.get = function (req, res, next) {
 
 updownload.post = function (req, res, next) {
     res.contentType = 'json';
-    logger.log('logFile').info('GET %s',req.url);
+    logger.log('logFile').info('POST %s',req.url);
     if (req.body) {
         logger.log('logFile').error('upload error: body is empty');
         res.send("error,body is empty");
