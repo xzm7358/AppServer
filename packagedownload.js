@@ -30,6 +30,9 @@ packagedownload.get = function (req, res, next) {
         }
         else {
             var path = './app/' + result[0].fileName;
+            if (!fs.existsSync('./app/')) {
+                fs.mkdirSync("./app/");
+            }
             logger.log('logFile').info("fileName:",result[0].fileName);
             fs.stat(path, function (error, stats) {
                 if (error) {

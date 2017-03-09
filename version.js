@@ -36,7 +36,7 @@ version.get = function(req , res, next) {
             fs.stat(app_path,function (err,stats) {
                 if (err) {
                     logger.log('logFile').error('no App in the path:',app_path);
-                    res.end({code:101});
+                    res.send({code:101});
                     return next();
                 } else {
                     var size = (stats.size / (1024*1024)).toFixed(2);

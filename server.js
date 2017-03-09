@@ -4,7 +4,8 @@
 const restify = require('restify');
 const plugins = require('restify-plugins');
 const fs = require('fs');
-const config = require('./config.json');
+const Config = require('./config');
+const config = new Config();
 
 const keys_dir = './cert/';
 const http_server = restify.createServer(config.server.http_options);
@@ -32,7 +33,9 @@ var setup_server = function (app) {
     // Middleware
     app.use(plugins.acceptParser(acceptable));
     app.use(plugins.queryParser());
-    app.use(plugins.bodyParser());
+    // app.use(plugins.bodyParser());
+    app.use(plugins.urlEncodedBodyParser());
+    app.use(plugins.jsonBodyParser());
     // Routes
     var history = require('./history');
     app.get('/v1/history/:imei', history.get);
@@ -72,6 +75,9 @@ var setup_server = function (app) {
     var deviceData = require('./deviceData');
     app.get('/v1/imeiData/:imei', deviceData.get);
 
+    var upload = require('./updownload');
+    app.post('/v1/uploadFile',upload.post);
+    app.get('/v1/uploadFile/:imeiName',upload.get);
 
 }
 // Now, setup both servers in one step
