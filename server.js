@@ -77,7 +77,7 @@ var setup_server = function (app) {
 
     var upload = require('./updownload');
     app.post('/v1/uploadFile',upload.post);
-    app.get('./v1/uploadFile/:imeiName',upload.get);
+    app.get('/v1/uploadFile/:imeiName',upload.get);
 
 }
 // Now, setup both servers in one step
