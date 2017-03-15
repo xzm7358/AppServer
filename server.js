@@ -17,7 +17,8 @@ var https_options = {
 };
 
 const https_server = restify.createServer(https_options);
-const acceptable = ['application/json',
+const acceptable = [
+    'application/json',
     'text/plain',
     'application/octet-stream',
     'application/javascript',
@@ -33,9 +34,14 @@ var setup_server = function (app) {
     // Middleware
     app.use(plugins.acceptParser(acceptable));
     app.use(plugins.queryParser());
-    // app.use(plugins.bodyParser());
-    app.use(plugins.urlEncodedBodyParser());
-    app.use(plugins.jsonBodyParser());
+
+    // app.use(plugins.bodyReader());
+    // app.use(plugins.urlEncodedBodyParser());
+    // app.use(plugins.jsonBodyParser());
+
+
+
+    // app.use(plugins.multipartBodyParser());
     // Routes
     var history = require('./history');
     app.get('/v1/history/:imei', history.get);
@@ -74,6 +80,13 @@ var setup_server = function (app) {
 
     var deviceData = require('./deviceData');
     app.get('/v1/imeiData/:imei', deviceData.get);
+    app.del('/v1/imeiData/:imei',deviceData.del);
+    // var logger = require('./log');
+    // app.del('/v1/imeiData/:imei',function (req, res, next) {
+    //     logger.log('logFile').info('req.res'+ "success");
+    //     res.send({code:0});
+    //     return next();
+    // });
 
     var upload = require('./updownload');
     app.post('/v1/uploadFile',upload.post);

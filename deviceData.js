@@ -11,6 +11,9 @@ var config = new Config();
 var redis = require('redis');
 var url = require('url');
 var http = require('http');
+var dbhandler = require('./dbhandler');
+var async = require('async');
+
 deviceData.get = function (req, res, next) {
     logger.log('logFile').info('GET %s', req.url);
     res.contentType = 'json';
@@ -81,3 +84,57 @@ deviceData.get = function (req, res, next) {
     })
     return next();
 };
+
+
+deviceData.del = function (req, res, next) {
+    logger.log('logFile').info('DEL %s', req.url);
+    res.contentType = 'json';
+
+    if (!req.params.hasOwnProperty('imei')) {
+        logger.log('logFile').error('Qt2server imei empty');
+        res.send({code: 101});
+        return next();
+    }
+    var imei = req.params.imei;
+    if (imei.length != 15) {
+        logger.log('logFile').error('imei.length = ' + imei.length);
+        res.send({code: 103});
+        return next();
+    }
+    logger.log('logFile').info('get imei at the delete function: ' + imei);
+    var delGpsSql = "delete from gps_" + imei;
+    var delItinerarySql = "TRUNCATE TABLE itinerary_" + imei;
+    var delVoltageSql = "update object set voltage=0 where imei=" + imei;
+    var delItinerary = "update object set itinerary=0 where imei=" + imei;
+    var Sqls = [
+        delGpsSql,
+        delItinerarySql,
+        delVoltageSql,
+        delItinerary
+    ];
+
+    async.eachSeries(Sqls, function (item, callback) {
+        //遍历每条SQL并执行
+        dbhandler(item,function (err, results) {
+            if (err) {
+                //异常后调用callback并传入err
+                callback(err);
+                logger.log('logFile').error("SQL:"+ item +"failed at deviceData.del");
+            } else {
+                logger.log('logFile').info("SQL:"+ item +"success at deviceData.del");
+                callback();
+            }
+        });
+
+    },function (allerr) {
+        //所有SQL执行完成后回调
+        if (allerr) {
+            logger.log('logFile').error("All SQL finished at deviceData.del ,but error occured:",allerr);
+            res.send({code:100})
+        } else {
+            logger.log('logFile').info("ALL SQL success.");
+            res.send({code:0});
+        }
+    });
+    return next();
+}
