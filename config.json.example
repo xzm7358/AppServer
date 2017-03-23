@@ -1,0 +1,52 @@
+{
+    "name":"server config",
+    "description":"server config",
+    "redis_cli":
+    {
+        "host":"xxx.xxx.xxx.xxx",
+        "port": xxx,
+        "pwd" :"xxxxxxxxxx"
+    },
+    "mysql":
+    {
+        "host": "xxx.xxx.xxx.xxx",
+        "user": "xxx",
+        "password": "xxx",
+        "database": "xxx",
+        "multipleStatements" : true
+    }
+    "server":
+    {
+        "http_options":
+        {
+            "name": "Electromble@xiaoan",
+            "version": "1.0.0"
+        },
+        "https_options":
+        {
+            "name": "Electromble@xiaoan"
+        }
+
+    },
+    "device_http_options":
+    {
+        "host": "www.xiaoan110.com",
+        "port": 8082,
+        "path": "/v1/device",
+        "method": "POST",
+        "headers":
+        {
+            "Content-Type": "application/json"
+        }
+    },
+    "deviceData_http_options":{
+        "host": "www.xiaoan110.com",
+        "port": 8082,
+        "path":"/v1/imeiData",
+        "method":"GET",
+        "headers":
+        {
+            "Content-Type": "application/json"
+        }
+    }
+}

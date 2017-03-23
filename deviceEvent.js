@@ -13,7 +13,7 @@ deviceEvent.get = function (req, res, next) {
     res.contentType = 'json';
 
     if (!req.params.hasOwnProperty('imei')) {
-        logger.log('logFile').error('device event url error: no imei');
+        logger.log('logFile').error('deviceEvent.js device event url error: no imei');
         res.send({code:101});
         return next();
     }
@@ -21,7 +21,7 @@ deviceEvent.get = function (req, res, next) {
 
     if (imei.length != 15)
     {
-        logger.log('logFile').error('imei.length = ' + imei.length);
+        logger.log('logFile').error('deviceEvent.js imei.length = ' + imei.length);
         res.send({code:101});
         return next();
     }
@@ -55,7 +55,7 @@ deviceEvent.get = function (req, res, next) {
 
     dbhandler(selectsql, function (selecterr, selectres) {
         if (selecterr) {
-            logger.log('logFile').fatal('[SELECT ERROR - ', selecterr.message);
+            logger.log('logFile').fatal('deviceEvent.js [SELECT ERROR - ', selecterr.message);
             res.send({code:101});
         } else {
             var deviceEventReply = [];

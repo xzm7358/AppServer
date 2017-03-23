@@ -6,8 +6,7 @@
 var deviceData = exports;
 
 var logger = require('./log');
-var Config = require('./config');
-var config = new Config();
+var config = require('./config.json');
 var redis = require('redis');
 var url = require('url');
 var http = require('http');
@@ -40,10 +39,10 @@ deviceData.get = function (req, res, next) {
         logger.log('logFile').info("get into the connect");
         client.get(imei, function (getErr, getRes) {
             if (getErr) {
-                logger.log('logFile').error('No imei in the redis server.');
+                logger.log('logFile').error('deviceData.js error:No imei in the redis server.');
                 res.send({code: 101});
             } else if (!getRes) {
-                logger.log('logFile').error('Data in the redis server is empty.');
+                logger.log('logFile').error('deviceData.js error:Data in the redis server is empty.');
                 res.send({code:109})
             }
             else {
@@ -65,17 +64,17 @@ deviceData.get = function (req, res, next) {
                         });
                     }
                     else {
-                        logger.log('logFile').err("ERROR: simcom server no response ");
+                        logger.log('logFile').error("deviceData.js ERROR: simcom server no response ");
                         res.send({code: 106});
                     }
                 });
 
                 requset.on('error', function (reqerr) {
-                    logger.log('logFile').fatal('problem with request after:' + reqerr.message);
+                    logger.log('logFile').fatal('deviceData.js problem with request after:' + reqerr.message);
                     res.send({code: 100})
                 });
                 requset.on('timeout',function (err) {
-                    logger.log('logFile').fatal('problem with request timeout:' + err.message);
+                    logger.log('logFile').fatal('deviceData.js problem with request timeout:' + err.message);
                 });
                 requset.end();
             }

@@ -4,8 +4,7 @@
 const restify = require('restify');
 const plugins = require('restify-plugins');
 const fs = require('fs');
-const Config = require('./config');
-const config = new Config();
+const config = require('./config.json');
 
 const keys_dir = './cert/';
 const http_server = restify.createServer(config.server.http_options);
@@ -57,8 +56,9 @@ var setup_server = function (app) {
     app.get('/v1/package',bodyParser, packagedownload.get);
 
     var device = require('./device');
-    app.post('/v1/device',bodyParser, device.post);
-
+    app.post('/v1/server',bodyParser,device.post);
+    app.post('/v1/device',bodyParser,device.post);
+    
     var record = require('./record');
     app.get('/v1/record',bodyParser, record.get);
 
