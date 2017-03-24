@@ -7,7 +7,6 @@ var fs = require('fs');
 var path = require('path');
 var multiparty = require('multiparty');
 const uploadDir = "./upload/";
-const MAXNAMENUM = 32;
 updownload.get = function (req, res, next) {
     res.contentType = 'json';
     logger.log('logFile').info('GET %s',req.url);
@@ -57,7 +56,6 @@ updownload.post = function (req, res, next) {
 	req.on('end',function () {
 		var BodyDataBuff = Buffer.concat(receiveBodyData);
 		logger.log('logFile').info('BodyDataBuff.length:',BodyDataBuff.length);
-		
         logger.log('logFile').info("receiveBodyData.length:",nread);
 
 		var pattern = /\d{15}\_[-]?\d*\.amr/;
@@ -65,9 +63,7 @@ updownload.post = function (req, res, next) {
 			logger.log('logFile').info('fileName.length:',fileName.length);
 			var amrName = fileName.match(pattern)[0];
 			logger.log('logFile').info("amrName:",amrName);
-			var storeBodyDataBuf = BodyDataBuff.slice(MAXNAMENUM,nread);
-			logger.log('logFile').info('After ,BodyDataBuff.length:',storeBodyDataBuf.length);
-			fs.writeFileSync("./upload/"+amrName,storeBodyDataBuf);
+			fs.writeFileSync("./upload/"+amrName,BodyDataBuff);
 			res.send({code:0});
 		} else {
 			res.send({code:100});
