@@ -14,7 +14,7 @@
         "password": "xxx",
         "database": "xxx",
         "multipleStatements" : true
-    }
+    },
     "server":
     {
         "http_options":
