@@ -7,7 +7,6 @@ var fs = require('fs');
 var path = require('path');
 var multiparty = require('multiparty');
 const uploadDir = "./upload/";
-
 updownload.get = function (req, res, next) {
     res.contentType = 'json';
     logger.log('logFile').info('GET %s',req.url);
@@ -41,52 +40,35 @@ updownload.get = function (req, res, next) {
 };
 
 updownload.post = function (req, res, next) {
-    res.contentType = 'json';
     logger.log('logFile').info('POST %s',req.url);
-    if (req.body) {
-        logger.log('logFile').error('upload error: body is empty');
-        res.send("error,body is empty");
-    }
     if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir);
         logger.log('logFile').info('mkdir '+ uploadDir + 'in upload process');
     }
-    res.contentType = 'json';
-    var form = new multiparty.Form({
-        uploadDir: uploadDir,
-        encoding : 'utf-8',
-        keepExtensions : true,
-        maxFieldsSize : 2 * 1024 * 1024
+	var receiveBodyData = [];
+	var nread = 0;
+	var fileName =  req.headers.filename;
+	logger.log('logFile').info(fileName);
+	req.on('data',function (chunk) {
+		nread += chunk.length;
+		receiveBodyData.push(chunk);
     });
-    form.on('error', function (err) {
-        logger.log('logFile').error('Error occur at the upload file process from device during parsing form:' ,err.stack);
-        res.send({code:100});
+	req.on('end',function () {
+		var BodyDataBuff = Buffer.concat(receiveBodyData);
+		logger.log('logFile').info('BodyDataBuff.length:',BodyDataBuff.length);
+        logger.log('logFile').info("receiveBodyData.length:",nread);
+
+		var pattern = /\d{15}\_[-]?\d*\.amr/;
+		if(pattern.test(fileName)) {
+			logger.log('logFile').info('fileName.length:',fileName.length);
+			var amrName = fileName.match(pattern)[0];
+			logger.log('logFile').info("amrName:",amrName);
+			fs.writeFileSync("./upload/"+amrName,BodyDataBuff);
+			res.send({code:0});
+		} else {
+			res.send({code:100});
+		}
     });
-    form.parse(req, function (err, fields, files) {
-        if (err) {
-            res.writeHead(400, {'content-type': 'text/plain'});
-            res.end("invalid request in upload process: " + err.message);
-            return next();
-        } else {
-            var fileNameArr = Object.keys(files);
-            var firstFileName = fileNameArr[0];
-            var fileDataArr = files[firstFileName];
-            var fileData = fileDataArr[0];
-            var uploadedPath = fileData.path;
-            var dstPath = './upload/' + fileData.originalFilename;
-            logger.log('logFile').info('rename file destination Path is ',dstPath);
-            logger.log('logFile').info('rename file from the uploadPath:',uploadedPath);
-            fs.rename(uploadedPath, dstPath, function (err) {
-                if (err) {
-                    logger.log('logFile').info('rename failed but file had been uploaded:', err);
-                    res.send("file had been uploaded success but rename error:",err);
-                } else {
-                    logger.log('logFile').info('rename file success at the form parse');
-                    res.send({fileName:fileData.originalFilename});
-                }
-                return next();
-            });
-        }
-    });
+	
     return next();
 }

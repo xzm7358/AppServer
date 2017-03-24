@@ -6,6 +6,7 @@ var packagedownload = exports;
 var fs = require('fs');
 var dbhandler= require('./dbhandler');
 var logger = require('./log');
+var path = require('path');
 packagedownload.get = function (req, res, next) {
     logger.log('logFile').info("GET ", req.url);
     var type = req.query.type;
@@ -29,23 +30,24 @@ packagedownload.get = function (req, res, next) {
             res.send({code: 101});
         }
         else {
-            var path = './app/' + result[0].fileName;
+            var filepath = './app/' + result[0].fileName;
             if (!fs.existsSync('./app/')) {
                 fs.mkdirSync("./app/");
             }
-            logger.log('logFile').info("fileName:",result[0].fileName);
-            fs.stat(path, function (error, stats) {
+            var fileName = path.basename(filepath);
+            logger.log('logFile').info("fileName:",fileName);
+            fs.stat(filepath, function (error, stats) {
                 if (error) {
-                    logger.log('logFile').error("file " +path + "not found");
+                    logger.log('logFile').error("file " +filepath + "not found");
                     res.send({code: 101});
                 }
                 else {
-                    res.set({
+                     res.set({
                         'Content-Type': 'application/vnd.android.package-archive',
-                        'Content-Disposition': 'attachment; filename=package',
+                        'Content-Disposition': 'attachment; filename='+fileName,
                         'Content-Length': stats.size
                     });
-                    fs.createReadStream(path).pipe(res);
+                    fs.createReadStream(filepath).pipe(res);
                     logger.log('logFile').info("db proc package OK");
                 }
             });

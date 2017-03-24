@@ -4,8 +4,7 @@
 const restify = require('restify');
 const plugins = require('restify-plugins');
 const fs = require('fs');
-const Config = require('./config');
-const config = new Config();
+const config = require('./config.json');
 
 const keys_dir = './cert/';
 const http_server = restify.createServer(config.server.http_options);
@@ -17,7 +16,8 @@ var https_options = {
 };
 
 const https_server = restify.createServer(https_options);
-const acceptable = ['application/json',
+const acceptable = [
+    'application/json',
     'text/plain',
     'application/octet-stream',
     'application/javascript',
@@ -33,31 +33,30 @@ var setup_server = function (app) {
     // Middleware
     app.use(plugins.acceptParser(acceptable));
     app.use(plugins.queryParser());
-    // app.use(plugins.bodyParser());
-    app.use(plugins.urlEncodedBodyParser());
-    app.use(plugins.jsonBodyParser());
+    app.use(plugins.bodyParser());
     // Routes
     var history = require('./history');
-    app.get('/v1/history/:imei', history.get);
+    app.get('/v1/history/:imei',history.get);
 
     var itinerary = require('./itinerary');
     app.get('/v1/itinerary/:imei', itinerary.get);
 
     var telephone = require('./telephone');
     app.put('/v1/telephone/:imei', telephone.put);
-    app.post('/v1/telephone/:imei', telephone.post);
-    app.get('/v1/telephone/:imei', telephone.get);
+    app.post('/v1/telephone/:imei',telephone.post);
+    app.get('/v1/telephone/:imei',telephone.get);
     app.del('/v1/telephone/:imei', telephone.del);
 
     var version = require('./version');
-    app.get('/v1/version', version.get);
+    app.get('/v1/version',version.get);
 
     var packagedownload = require('./packagedownload');
-    app.get('/v1/package', packagedownload.get);
+    app.get('/v1/package',packagedownload.get);
 
     var device = require('./device');
-    app.post('/v1/device', device.post);
-
+    app.post('/v1/server',device.post);
+    app.post('/v1/device',device.post);
+    
     var record = require('./record');
     app.get('/v1/record', record.get);
 
@@ -70,11 +69,12 @@ var setup_server = function (app) {
     app.get('/v1/event/:imei',event.get);
 
     var deviceEvent = require('./deviceEvent');
-    app.get('/v1/deviceEvent/:imei', deviceEvent.get);
+    app.get('/v1/deviceEvent/:imei',deviceEvent.get);
 
     var deviceData = require('./deviceData');
-    app.get('/v1/imeiData/:imei', deviceData.get);
-
+    app.get('/v1/imeiData/:imei',deviceData.get);
+    app.del('/v1/imeiData/:imei',deviceData.del);
+    
     var upload = require('./updownload');
     app.post('/v1/uploadFile',upload.post);
     app.get('/v1/uploadFile/:imeiName',upload.get);
