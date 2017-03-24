@@ -33,53 +33,51 @@ var setup_server = function (app) {
     // Middleware
     app.use(plugins.acceptParser(acceptable));
     app.use(plugins.queryParser());
-	const bodyParser = plugins.bodyParser();
-	const bodyReader = plugins.bodyReader();
-	
+    app.use(plugins.bodyParser());
     // Routes
     var history = require('./history');
-    app.get('/v1/history/:imei',bodyParser, history.get);
+    app.get('/v1/history/:imei',history.get);
 
     var itinerary = require('./itinerary');
-    app.get('/v1/itinerary/:imei',bodyParser, itinerary.get);
+    app.get('/v1/itinerary/:imei', itinerary.get);
 
     var telephone = require('./telephone');
-    app.put('/v1/telephone/:imei',bodyParser, telephone.put);
-    app.post('/v1/telephone/:imei',bodyParser, telephone.post);
-    app.get('/v1/telephone/:imei',bodyParser, telephone.get);
-    app.del('/v1/telephone/:imei',bodyParser, telephone.del);
+    app.put('/v1/telephone/:imei', telephone.put);
+    app.post('/v1/telephone/:imei',telephone.post);
+    app.get('/v1/telephone/:imei',telephone.get);
+    app.del('/v1/telephone/:imei', telephone.del);
 
     var version = require('./version');
-    app.get('/v1/version',bodyParser, version.get);
+    app.get('/v1/version',version.get);
 
     var packagedownload = require('./packagedownload');
-    app.get('/v1/package',bodyParser, packagedownload.get);
+    app.get('/v1/package',packagedownload.get);
 
     var device = require('./device');
-    app.post('/v1/server',bodyParser,device.post);
-    app.post('/v1/device',bodyParser,device.post);
+    app.post('/v1/server',device.post);
+    app.post('/v1/device',device.post);
     
     var record = require('./record');
-    app.get('/v1/record',bodyParser, record.get);
+    app.get('/v1/record', record.get);
 
     var user2dev = require('./user2dev');
-    app.get('/v1/user/:tel',bodyParser,user2dev.get);
-    app.post('/v1/user/:tel',bodyParser,user2dev.post);
-    app.del('/v1/user/:tel',bodyParser,user2dev.del);
+    app.get('/v1/user/:tel',user2dev.get);
+    app.post('/v1/user/:tel',user2dev.post);
+    app.del('/v1/user/:tel',user2dev.del);
 
     var event = require('./event');
-    app.get('/v1/event/:imei',bodyParser,event.get);
+    app.get('/v1/event/:imei',event.get);
 
     var deviceEvent = require('./deviceEvent');
-    app.get('/v1/deviceEvent/:imei',bodyParser, deviceEvent.get);
+    app.get('/v1/deviceEvent/:imei',deviceEvent.get);
 
     var deviceData = require('./deviceData');
-    app.get('/v1/imeiData/:imei',bodyParser, deviceData.get);
-    app.del('/v1/imeiData/:imei',bodyParser,deviceData.del);
+    app.get('/v1/imeiData/:imei',deviceData.get);
+    app.del('/v1/imeiData/:imei',deviceData.del);
     
     var upload = require('./updownload');
-    app.post('/v1/uploadFile', bodyReader,upload.post);
-    app.get('/v1/uploadFile/:imeiName',bodyParser,upload.get);
+    app.post('/v1/uploadFile',upload.post);
+    app.get('/v1/uploadFile/:imeiName',upload.get);
 
 }
 // Now, setup both servers in one step

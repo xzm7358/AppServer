@@ -41,20 +41,15 @@ updownload.get = function (req, res, next) {
 };
 
 updownload.post = function (req, res, next) {
-    res.contentType = 'json';
     logger.log('logFile').info('POST %s',req.url);
-   /*if (!req.body) {
-        logger.log('logFile').error('upload error: body is empty');
-        res.send("error,body is empty");
-    }
-	*/
     if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir);
         logger.log('logFile').info('mkdir '+ uploadDir + 'in upload process');
     }
 	var receiveBodyData = [];
 	var nread = 0;
-	
+	var fileName =  req.headers.filename;
+	logger.log('logFile').info(fileName);
 	req.on('data',function (chunk) {
 		nread += chunk.length;
 		receiveBodyData.push(chunk);
@@ -64,8 +59,7 @@ updownload.post = function (req, res, next) {
 		logger.log('logFile').info('BodyDataBuff.length:',BodyDataBuff.length);
 		
         logger.log('logFile').info("receiveBodyData.length:",nread);
-		
-		var fileName = BodyDataBuff.toString('utf-8',0,MAXNAMENUM);
+
 		var pattern = /\d{15}\_[-]?\d*\.amr/;
 		if(pattern.test(fileName)) {
 			logger.log('logFile').info('fileName.length:',fileName.length);
