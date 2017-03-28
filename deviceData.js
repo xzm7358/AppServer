@@ -68,7 +68,6 @@ deviceData.get = function (req, res, next) {
                         res.send({code: 106});
                     }
                 });
-
                 requset.on('error', function (reqerr) {
                     logger.log('logFile').fatal('deviceData.js problem with request after:' + reqerr.message);
                     res.send({code: 100})
@@ -105,11 +104,13 @@ deviceData.del = function (req, res, next) {
     var delItinerarySql = "TRUNCATE TABLE itinerary_" + imei;
     var delVoltageSql = "update object set voltage=0 where imei=" + imei;
     var delItinerary = "update object set itinerary=0 where imei=" + imei;
+    var delTelnumber = "delete from imei2Telnumber where imei="+imei;
     var Sqls = [
         delGpsSql,
         delItinerarySql,
         delVoltageSql,
-        delItinerary
+        delItinerary,
+        delTelnumber
     ];
 
     async.eachSeries(Sqls, function (item, callback) {
