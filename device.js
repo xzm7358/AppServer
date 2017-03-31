@@ -28,17 +28,17 @@ device.post = function (req, res, next) {
             client = redis.createClient(config.redis_cli.port,config.redis_cli.host,RDS_OPTS);
 
         client.on("error", function (err) {
-            logger.log('logFile').error("device.js redis client error: ",err);
+            logger.log('logFile').error("device.js "+imei+": redis client error: ",err);
             res.send({code:100});
         });
         client.on("connect", function () {
             logger.log('logFile').info("get into the connect");
             client.get(imei,function(getErr, getRes) {
                 if (getErr) {
-                    logger.log('logFile').error('device.js '+imei +' :connect error:'+ getErr);
+                    logger.log('logFile').error('device.js '+imei +': connect error:'+ getErr);
                     res.send({code:101});
                 } else if(!getRes) {
-                    logger.log('logFile').error('device.js '+imei+' :error:Data in the redis server is empty,getRes empty,imei:');
+                    logger.log('logFile').error('device.js '+imei+': error:Data in the redis server is empty,getRes empty,imei:');
                     var noResRequest = http.request(config.device_http_options, function (response) {
                         if (response.statusCode === 200) {
                             var bodydata = "";

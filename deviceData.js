@@ -119,9 +119,9 @@ deviceData.del = function (req, res, next) {
             if (err) {
                 //异常后调用callback并传入err
                 callback(err);
-                logger.log('logFile').error("SQL:"+ item +"failed at deviceData.del");
+                logger.log('logFile').error("SQL:"+imei+":"+ item +"failed at deviceData.del");
             } else {
-                logger.log('logFile').info("SQL:"+ item +"success at deviceData.del");
+                logger.log('logFile').info("SQL:"+imei+":"+ item +"success at deviceData.del");
                 callback();
             }
         });
@@ -129,7 +129,7 @@ deviceData.del = function (req, res, next) {
     },function (allerr) {
         //所有SQL执行完成后回调
         if (allerr) {
-            logger.log('logFile').error("All SQL finished at deviceData.del ,but error occured:",allerr);
+            logger.log('logFile').error(imei+":All SQL finished at deviceData.del ,but error occured:",allerr);
             res.send({code:100})
         } else {
             logger.log('logFile').info("ALL SQL success.");
