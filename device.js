@@ -21,7 +21,8 @@ device.post = function (req, res, next) {
     }
     else
     {
-        var imei = req.body.imei;
+        var imei = req.body.imei || req.body.IMEI;
+        console.log('imei:',imei)
         var transdata = JSON.stringify(req.body);
         logger.log('logFile').info('app2dev:', transdata);
         var RDS_OPTS = {auth_pass:config.redis_cli.pwd},
@@ -38,7 +39,7 @@ device.post = function (req, res, next) {
                     logger.log('logFile').error('device.js '+imei +': connect error:'+ getErr);
                     res.send({code:101});
                 } else if(!getRes) {
-                    logger.log('logFile').error('device.js '+imei+': error:Data in the redis server is empty,getRes empty,imei:');
+                    logger.log('logFile').error('device.js '+imei+': error:Data in the redis server is empty,getRes empty,imei');
                     var noResRequest = http.request(config.device_http_options, function (response) {
                         if (response.statusCode === 200) {
                             var bodydata = "";
