@@ -10,13 +10,13 @@ history.get = function(req, res, next) {
     res.contentType = 'json';
 
     if(!req.params.hasOwnProperty('imei')){
-        logger.log('logFile').error('no imei');
+        logger.log('logFile').error('history get req.body no imei');
         res.send({code: 101});
         return next();
     }
     var imei = req.params.imei;
     if(imei.length != 15) {
-        logger.log('logFile').error('imei.length = '+ imei.length);
+        logger.log('logFile').error('history.js '+imei+' imei.length = '+ imei.length);
         res.send({code: 101});
         return next();
     }
@@ -40,11 +40,11 @@ history.get = function(req, res, next) {
     dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
-            logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
+            logger.log('logFile').fatal('history.js get '+imei+' [SELECT ERROR - '+ starterr.message);
             res.send({code: 101});
         }
         else if(startresult.length === 0){
-            logger.log('logFile').error('startresult.length = ' + startresult.length);
+            logger.log('logFile').error('history.js get '+imei + ' history get startresult.length = ' + startresult.length);
             res.send({code: 101});
         }
         else{

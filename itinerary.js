@@ -39,11 +39,11 @@ itinerary.get = function(req, res, next) {
     dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
-            logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
+            logger.log('logFile').fatal('itinerary.js get '+imei+' [SELECT ERROR - '+ starterr.message);
             res.send({code: 101});
         }
         else if(startresult.length === 0){
-            logger.log('logFile').error('no data in result');
+            logger.log('logFile').error('itinerary.js '+imei+' get no data in result');
             res.send({code: 101});
         }
         else{
