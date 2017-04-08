@@ -18,13 +18,13 @@ deviceData.get = function (req, res, next) {
     res.contentType = 'json';
 
     if (!req.params.hasOwnProperty('imei')) {
-        logger.log('logFile').error('Qt2server imei empty');
+        logger.log('logFile').error('deviceData.js get Qt2server imei empty');
         res.send({code: 101});
         return next();
     }
     var imei = req.params.imei;
     if (imei.length != 15) {
-        logger.log('logFile').error('imei.length = ' + imei.length);
+        logger.log('logFile').error(' deviceData.js ' + imei + ' imei.length = ' + imei.length);
         res.send({code: 103});
         return next();
     }
@@ -33,16 +33,16 @@ deviceData.get = function (req, res, next) {
         client = redis.createClient(config.redis_cli.port, config.redis_cli.host, RDS_OPTS);
 
     client.on("error", function (err) {
-        logger.log('logFile').error("Error: ", err);
+        logger.log('logFile').error("deviceData.js " + imei + "connect redis client Error: ", err);
     });
     client.on("connect", function () {
         logger.log('logFile').info("get into the connect");
         client.get(imei, function (getErr, getRes) {
             if (getErr) {
-                logger.log('logFile').error('deviceData.js error:No imei in the redis server.');
+                logger.log('logFile').error('deviceData.js '+imei+' error:No imei in the redis server.');
                 res.send({code: 101});
             } else if (!getRes) {
-                logger.log('logFile').error('deviceData.js error:Data in the redis server is empty.');
+                logger.log('logFile').error('deviceData.js '+ imei +' error:Data in the redis server is empty.');
                 res.send({code:109})
             }
             else {
@@ -64,16 +64,16 @@ deviceData.get = function (req, res, next) {
                         });
                     }
                     else {
-                        logger.log('logFile').error("deviceData.js ERROR: simcom server no response ");
+                        logger.log('logFile').error("deviceData.js "+imei+" ERROR: simcom server no response ");
                         res.send({code: 106});
                     }
                 });
                 requset.on('error', function (reqerr) {
-                    logger.log('logFile').fatal('deviceData.js problem with request after:' + reqerr.message);
+                    logger.log('logFile').fatal('deviceData.js '+imei+' problem with request after:' + reqerr.message);
                     res.send({code: 100})
                 });
                 requset.on('timeout',function (err) {
-                    logger.log('logFile').fatal('deviceData.js problem with request timeout:' + err.message);
+                    logger.log('logFile').fatal('deviceData.js ' +imei+' problem with request timeout:' + err.message);
                 });
                 requset.end();
             }
@@ -89,13 +89,13 @@ deviceData.del = function (req, res, next) {
     res.contentType = 'json';
 
     if (!req.params.hasOwnProperty('imei')) {
-        logger.log('logFile').error('Qt2server imei empty');
+        logger.log('logFile').error('deviceData.js del Qt2server imei empty');
         res.send({code: 101});
         return next();
     }
     var imei = req.params.imei;
     if (imei.length != 15) {
-        logger.log('logFile').error('imei.length = ' + imei.length);
+        logger.log('logFile').error(imei + 'imei.length = ' + imei.length);
         res.send({code: 103});
         return next();
     }

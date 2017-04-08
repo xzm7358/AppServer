@@ -6,6 +6,7 @@ var mysql = require('mysql');
 var dbhandler = require('./dbhandler');
 var fs = require('fs');
 var logger = require('./log');
+
 version.get = function(req , res, next) {
     var selectsql;
     logger.log('logFile').info("GET ", req.url);
@@ -23,7 +24,7 @@ version.get = function(req , res, next) {
     logger.log('logFile').info(selectsql);
     dbhandler(selectsql, function (error, result) {
         if (error) {
-            logger.log('logFile').fatal('[SELECT ERROR - ', error.message);
+            logger.log('logFile').fatal('version.js '+'[SELECT ERROR - '+ error.message);
             res.send({code: 101});
         } else if(result.length === 0) {
             logger.log('logFile').error('no data in database');

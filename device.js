@@ -29,7 +29,7 @@ device.post = function (req, res, next) {
             client = redis.createClient(config.redis_cli.port,config.redis_cli.host,RDS_OPTS);
 
         client.on("error", function (err) {
-            logger.log('logFile').error("device.js "+imei+": redis client error: ",err);
+            logger.log('logFile').error("device.js "+imei+": redis client error: "+ err);
             res.send({code:100});
         });
         client.on("connect", function () {
@@ -52,7 +52,7 @@ device.post = function (req, res, next) {
                             });
                         }
                         else {
-                            logger.log('logFile').error("device.js"+imei+" :error:simcomServer no response ");
+                            logger.log('logFile').error("device.js "+imei+" :error:simcomServer no response ");
                             res.send({code:106});
                         }
                     });
@@ -80,13 +80,13 @@ device.post = function (req, res, next) {
                             });
                         }
                         else {
-                            logger.log('logFile').error("device.js"+imei+" after connect simcomServer error:simcomServer no response ");
+                            logger.log('logFile').error("device.js "+imei+" after connect simcomServer error:simcomServer no response ");
                             res.send({code:106});
                         }
                     });
 
                     requset.on('error', function (reqerr) {
-                        logger.log('logFile').fatal('device.js '+imei+'connect with simcomServer problem with request:' + reqerr.message);
+                        logger.log('logFile').fatal('device.js '+imei+' connect with simcomServer problem with request:' + reqerr.message);
                         res.send({code:103})
                     });
                     requset.end(transdata);

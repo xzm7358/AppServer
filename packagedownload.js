@@ -21,12 +21,12 @@ packagedownload.get = function (req, res, next) {
     dbhandler(selectsql, function (error , result) {
         if (error)
         {
-            logger.log('logFile').fatal('[SELECT ERROR - ', error.message);
+            logger.log('logFile').fatal('package download get '+'[SELECT ERROR - '+ error.message);
             res.send({code:101});
         }
         else if (result.length === 0)
         {
-            logger.log('logFile').error('no data in database');
+            logger.log('logFile').error('package download get error:no data in database');
             res.send({code: 101});
         }
         else {
@@ -38,7 +38,7 @@ packagedownload.get = function (req, res, next) {
             logger.log('logFile').info("fileName:",fileName);
             fs.stat(filepath, function (error, stats) {
                 if (error) {
-                    logger.log('logFile').error("file " +filepath + "not found");
+                    logger.log('logFile').error("package download get :file " +filepath + "not found");
                     res.send({code: 101});
                 }
                 else {
