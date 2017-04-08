@@ -26,7 +26,7 @@ exports.log = function (name) {
         "replaceConsole": true,
         "levels":
             {
-                "logFile":"ERROR"
+                "logFile":"INFO"
             }
     });
     var dataFilelog = log4js.getLogger(name);
