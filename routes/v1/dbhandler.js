@@ -1,7 +1,7 @@
 /**
  * Created by zzs on 2017/1/12.
  */
-var config = require('./config.json');
+const config = require("../config.json");
 var mysql = require('mysql');
 var pool = mysql.createPool(config.mysql);
 

@@ -3,11 +3,13 @@
  */
 var log4js = require('log4js');
 var fs = require('fs');
-
+var path = require('path');
 exports.log = function (name) {
-    if (!fs.existsSync("./logs/")) {
-        fs.mkdirSync("./logs/");
+    if (!fs.existsSync(path.resolve(__dirname, '../../logs/'))) {
+        fs.mkdirSync(path.resolve(__dirname, '../../logs/'));
     }
+    var filename = path.resolve(__dirname, '../../') + "/logs/time";
+    console.log('filename:',filename);
     log4js.configure({
         "appenders":
             [
@@ -18,7 +20,7 @@ exports.log = function (name) {
                 {
                     "type":"dateFile",
                     "category":"logFile",
-                    "filename":"./logs/time",
+                    "filename":filename,
                     "pattern":"-yyyy-MM-dd.log",
                     "alwaysIncludePattern":true
                 }

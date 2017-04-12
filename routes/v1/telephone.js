@@ -5,7 +5,7 @@ TopClient = require('topSdk').ApiClient;
 var mysql = require('mysql');
 var callAlarm = require('./alarm');
 var dbhandler = require('./dbhandler');
-var logger = require('./log');
+var logger = require('./log').log('logFile');
 
 var telephone = exports;
 var telnumber = [
@@ -22,7 +22,7 @@ var telnumber = [
     "051482043274",
 ];
 telephone.put = function(req, res, next) {
-    logger.log('logFile').info('PUT %s', req.url);
+    logger.info('PUT %s', req.url);
     res.contentType = 'json';
     if(!req.params.hasOwnProperty('imei')){
         res.send({code: 101});
@@ -33,7 +33,7 @@ telephone.put = function(req, res, next) {
         res.send({code: 101});
         return next();
     }
-    logger.log('logFile').info('get imei: '+ imei);
+    logger.info('get imei: '+ imei);
 
     var arr = [];
     req.on("data",function(data){
@@ -45,55 +45,55 @@ telephone.put = function(req, res, next) {
         req.body = ret;
     });
     if(!req.body.hasOwnProperty('caller')) {
-        logger.log('logFile').error('telephone.js put method no caller in the url');
-        logger.log('logFile').error('PUT %s', req.url);
+        logger.error('telephone.js put method no caller in the url');
+        logger.error('PUT %s', req.url);
         res.send({code: 101});
         return next();
     }
     var caller = req.body['caller'];
     if(caller > 10 || caller < 0 )
     {
-        logger.log('logFile').error('telephone.js put method caller range is too large: ' + caller);
-        logger.log('logFile').error('PUT %s', req.url);
+        logger.error('telephone.js put method caller range is too large: ' + caller);
+        logger.error('PUT %s', req.url);
         res.send({code: 101});
         return next();
     }
-    logger.log('logFile').info('get caller: ' + telnumber[caller]);
+    logger.info('get caller: ' + telnumber[caller]);
 
     var selectsql = 'select * from imei2Telnumber where imei = \''+ imei + '\'';
-    logger.log('logFile').info(selectsql);
+    logger.info(selectsql);
 
     dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
-            logger.log('logFile').error('[SELECT ERROR - ', starterr.message);
+            logger.error('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
             return next();
         }
         if(startresult.length === 0) {
-            logger.log('logFile').error('select from imei2Telnumber result.length = ' + startresult.length);
+            logger.error('select from imei2Telnumber result.length = ' + startresult.length);
             res.send({code: 101});
             return next();
         }
         if(!startresult[0].hasOwnProperty('Telnumber')) {
-            logger.log('logFile').error('telephone.js put no telnumber in result.');
-            logger.log('logFile').error('PUT %s', req.url);
+            logger.error('telephone.js put no telnumber in result.');
+            logger.error('PUT %s', req.url);
             res.send({code: 101});
             return next();
         }
         var telephone = startresult[0].Telnumber;
-        logger.log('logFile').info('test call: '+ telephone + ' ' + telnumber[caller]);
+        logger.info('test call: '+ telephone + ' ' + telnumber[caller]);
         callAlarm.put(telnumber[caller], telephone);
 
         //因为 nodejs 有回调的函数非阻塞，异步执行，所以这个地方应该嵌套执行
         selectsql = 'update imei2Telnumber set CallNumber = \'' + telnumber[caller] + '\'where imei = \''+imei+'\'';
         dbhandler(selectsql, function (starterr, startresult) {
             if (starterr) {
-                logger.log('logFile').error('telephone.js put update imei2Telnumber [SELECT ERROR - ', starterr.message);
+                logger.error('telephone.js put update imei2Telnumber [SELECT ERROR - ', starterr.message);
                 res.send({code: 101});
             }
             else {
-                logger.log('logFile').info('db proc OK');
+                logger.info('db proc OK');
                 res.send({code: 0});
             }
         });
@@ -103,23 +103,23 @@ telephone.put = function(req, res, next) {
 };
 
 telephone.post = function(req, res, next) {
-    logger.log('logFile').info('POST %s', req.url);
+    logger.info('POST %s', req.url);
     res.contentType = 'json';
 
     if(!req.params.hasOwnProperty('imei')){
-        logger.log('logFile').error('no imei');
-        logger.log('logFile').error('POST %s', req.url);
+        logger.error('no imei');
+        logger.error('POST %s', req.url);
         res.send({code: 101});
         return next();
     }
     var imei = req.params.imei;
     if(imei.length != 15) {
-        logger.log('logFile').error('telephone.js imei not correct: '+ imei);
-        logger.log('logFile').error('POST %s', req.url);
+        logger.error('telephone.js imei not correct: '+ imei);
+        logger.error('POST %s', req.url);
         res.send({code: 101});
         return next();
     }
-    logger.log('logFile').info('get imei: '+ imei);
+    logger.info('get imei: '+ imei);
 
     var arr = [];
     req.on("data",function(data){
@@ -131,22 +131,22 @@ telephone.post = function(req, res, next) {
 
         if(!ret.hasOwnProperty('telephone'))
         {
-            logger.log('logFile').error('no telephone');
-            logger.log('logFile').error('POST %s', req.url);
+            logger.error('no telephone');
+            logger.error('POST %s', req.url);
             res.send({code: 101});
             return next();
         }
         var phonenumber = ret.telephone;
 
         var selectsql = 'replace into imei2Telnumber(imei,Telnumber) values(\'' + imei + '\',\'' + phonenumber + '\')';
-        logger.log('logFile').info('selectsql:' + selectsql);
+        logger.info('selectsql:' + selectsql);
         dbhandler(selectsql, function (starterr, startresult){
             if (starterr) {
-                logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
+                logger.fatal('[SELECT ERROR - ', starterr.message);
                 res.send({code: 101});
             }
             else {
-                logger.log('logFile').info('db proc OK');
+                logger.info('db proc OK');
                 res.send({code: 0});
             }
         });
@@ -157,14 +157,14 @@ telephone.post = function(req, res, next) {
         var phoneNumber = req.body.telephone;
 
         var selectsql = 'replace into imei2Telnumber(imei,Telnumber) values(\'' + imei + '\',\'' + phoneNumber + '\')';
-        logger.log('logFile').info('selectsql:' + selectsql);
+        logger.info('selectsql:' + selectsql);
         dbhandler(selectsql, function (starterr, startresult){
             if (starterr) {
-                logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
+                logger.fatal('[SELECT ERROR - ', starterr.message);
                 res.send({code: 101});
             }
             else {
-                logger.log('logFile').info('db proc OK');
+                logger.info('db proc OK');
                 res.send({code: 0});
             }
         });
@@ -177,14 +177,14 @@ telephone.post = function(req, res, next) {
         var phonenumber = req.query.telephone;
 
         var selectsql = 'replace into imei2Telnumber(imei,Telnumber) values(\'' + imei + '\',\'' + phonenumber + '\')';
-        logger.log('logFile').info('selectsql:' + selectsql);
+        logger.info('selectsql:' + selectsql);
         dbhandler(selectsql, function (starterr, startresult){
             if (starterr) {
-                logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
+                logger.fatal('[SELECT ERROR - ', starterr.message);
                 res.send({code: 101});
             }
             else {
-                logger.log('logFile').info('db proc OK');
+                logger.info('db proc OK');
                 res.send({code: 0});
             }
         });
@@ -194,46 +194,46 @@ telephone.post = function(req, res, next) {
 };
 
 telephone.get = function(req, res, next) {
-    logger.log('logFile').info('GET %s', req.url);
+    logger.info('GET %s', req.url);
     res.contentType = 'json';
 
     if(!req.params.hasOwnProperty('imei')){
-        logger.log('logFile').error('no imei');
-        logger.log('logFile').error('POST %s', req.url);
+        logger.error('no imei');
+        logger.error('POST %s', req.url);
         res.send({code: 101});
         return next();
     }
     var imei = req.params.imei;
     if(imei.length != 15) {
-        logger.log('logFile').error('imei not correct: '+ imei);
-        logger.log('logFile').error('POST %s', req.url);
+        logger.error('imei not correct: '+ imei);
+        logger.error('POST %s', req.url);
         res.send({code: 101});
         return next();
     }
-    logger.log('logFile').info('get imei: '+ imei);
+    logger.info('get imei: '+ imei);
 
     var selectsql = 'select * from imei2Telnumber where imei = \''+imei+'\'';
-    logger.log('logFile').info('selectsql:'+ selectsql);
+    logger.info('selectsql:'+ selectsql);
     dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
-            logger.log('logFile').fatal('[SELECT ERROR - ', starterr.message);
+            logger.fatal('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
         }
         else {
             if(startresult.length === 0)
             {
-                logger.log('logFile').error("telephone.js get method select * from imei2Telnumber : no telnumber in database");
+                logger.error("telephone.js "+imei+ " get method select * from imei2Telnumber : no telnumber in database");
                 res.send({code: 101});
             }
             else{
                 if(startresult[0].hasOwnProperty('Telnumber')) {
-                    logger.log('logFile').info('db proc OK');
+                    logger.info('db proc OK');
                     var telephone = startresult[0].Telnumber;
                     res.send({telephone: telephone});
                 }
                 else{
-                    logger.log('logFile').error("telephone.js get method select * from imei2Telnumber :no telnumber in result");
+                    logger.error("telephone.js " +imei+" get method select * from imei2Telnumber :no telnumber in sql result");
                     res.send({code: 101});
                 }
             }
@@ -244,31 +244,31 @@ telephone.get = function(req, res, next) {
 };
 
 telephone.del = function(req, res, next) {
-    logger.log('logFile').info('DELETE %s', req.url);
+    logger.info('DELETE %s', req.url);
     res.contentType = 'json';
 
     if(!req.params.hasOwnProperty('imei')){
-        logger.log('logFile').error('telephone.js del method url no imei');
+        logger.error('telephone.js del method url no imei');
         res.send({code: 101});
         return next();
     }
     var imei = req.params.imei;
     if(imei.length != 15) {
-        logger.log('logFile').error('telephone.js del method url\'s imei not correct: '+ imei);
+        logger.error('telephone.js del method url\'s imei not correct: '+ imei);
         res.send({code: 101});
         return next();
     }
-    logger.log('logFile').info('get imei: '+ imei);
+    logger.info('get imei: '+ imei);
 
     var selectsql = 'delete from imei2Telnumber where imei = \'' + imei + '\'';
-    logger.log('logFile').info(selectsql);
+    logger.info(selectsql);
     dbhandler(selectsql, function (starterr, startresult){
         if (starterr) {
-            logger.log('logFile').error('[SELECT ERROR - ', starterr.message);
+            logger.error('[SELECT ERROR - ', starterr.message);
             res.send({code: 101});
         }
         else {
-            logger.log('logFile').info('db proc OK');
+            logger.info('db proc OK');
             res.send({code: 0});
         }
     });
