@@ -5,7 +5,7 @@
 var device = exports;
 var config = require('../config.json');
 var http = require('http');
-var logger = require('./log');
+var logger = require('./log').log('logFile');
 var redis = require('redis');
 var url= require('url');
 
