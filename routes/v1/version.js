@@ -1,15 +1,21 @@
-/**
- * Created by zzs on 2017/1/3.
+/* Copyright (C) Xiaoan Technology Co., Ltd - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Tom Chiang <jiangtao@xiaoantech.com>, Feb 2017
  */
-var version = exports;
-var mysql = require('mysql');
+
 var dbhandler = require('./dbhandler');
 var fs = require('fs');
 var logger = require('./log').log('logFile');
 var path = require('path');
-version.get = function(req , res, next) {
+
+const Router = require('restify-router').Router;
+const router = new Router();
+
+
+router.get('/', function(req , res, next) {
     var selectsql;
-    logger.info("GET ", req.url);
+    logger.trace('GET ', req.url);
     res.contentType = 'json';
     var type = req.query.type;
     logger.info('type: ', type);
@@ -56,4 +62,6 @@ version.get = function(req , res, next) {
         }
     })
     return next();
-};
+});
+
+module.exports = router;
