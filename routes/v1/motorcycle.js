@@ -17,8 +17,11 @@ motorcycle.post = function (req, res, next) {
   }
   else {
       var imei = req.body.imei;
-      logger.info('motorcycle.js get imei:'+imei);
-
+      logger.info('motorcycle.js get function get imei:'+imei);
+      if(imei.length != 15) {
+          res.send({code: 101});
+          return next();
+      }
       var ifExistSql = "select * from motorcycle where imei="+imei;
       var insertSql = "insert into motorcycle values("+imei+")";
       logger.info(ifExistSql);
@@ -71,12 +74,18 @@ motorcycle.post = function (req, res, next) {
 motorcycle.del = function (req, res, next) {
     logger.info('DEL %s',req.url);
     res.contentType = 'json';
-
-    if (!req.body) {
-        logger.error('motorcycle.js del error: req.body empty!');
-        res.send({code:102});
+    logger.info(req.params);
+    if(!req.params.hasOwnProperty('imei')){
+        logger.error('history get req.param no imei');
+        res.send({code: 101});
+        return next();
     } else {
-        var imei = req.body.imei;
+        var imei = req.params.imei;
+        logger.info('motorcycle.js del function get imei:'+imei);
+        if(imei.length != 15) {
+            res.send({code: 101});
+            return next();
+        }
         logger.info('motorcycle.js get imei:'+imei);
         var deleteSql = "delete from motorcycle where imei="+imei;
         dbhandler(deleteSql,function (deleteerr, deleteres) {

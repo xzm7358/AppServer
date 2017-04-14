@@ -51,7 +51,7 @@ router.get('/uploadFile/:imeiName',upload.get);
 var motorcycle = require('./motorcycle');
 
 router.post('/motorcycle',motorcycle.post);
-router.del('/motorcycle',motorcycle.del);
+router.del('/motorcycle/:imei',motorcycle.del);
 
 
 module.exports=router;
