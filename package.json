@@ -15,7 +15,7 @@
     "Electrombile",
     "restify"
   ],
-  "license": "GPL-3.0",
+  "license": "see in LICENSE",
   "dependencies": {
     "body-parser": "1.15.2",
     "cookie-parser": "^1.4.3",
