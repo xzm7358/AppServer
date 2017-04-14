@@ -11,6 +11,7 @@ const fs = require('fs');
 // const heapdump = require('heapdump');
 // const memwatch= require('memwatch-next');
 const routerInstance = require('./routes/routes');
+const adminRouter = require('./admin/routes');
 
 const http_options = {
     name: 'Electromble@xiaoan',
@@ -44,6 +45,7 @@ var setup_server = function (app) {
     app.use(plugins.bodyParser());
     // Routes
     routerInstance.applyRoutes(app);
+    adminRouter.applyRoutes(app, '/admin');
 };
 
 // Now, setup both servers in one step
