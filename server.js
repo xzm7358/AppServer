@@ -43,6 +43,8 @@ var setup_server = function (app) {
     app.use(plugins.acceptParser(acceptable));
     app.use(plugins.queryParser());
     app.use(plugins.bodyParser());
+    app.use(restify.authorizationParser());
+
     // Routes
     routerInstance.applyRoutes(app);
     adminRouter.applyRoutes(app, '/admin');
