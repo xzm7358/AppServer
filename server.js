@@ -3,8 +3,13 @@
  */
 const restify = require('restify');
 const plugins = require('restify-plugins');
+const Router = require('restify-router').Router;
+const routerInstance = new Router();
 const fs = require('fs');
-const config = require('./config.json');
+const config = require('./routes/config.json');
+//const heapdump = require('heapdump');
+const memwatch= require('memwatch-next');
+const urlRequset = require('./routes/routes');
 
 const keys_dir = './cert/';
 const http_server = restify.createServer(config.server.http_options);
@@ -35,51 +40,10 @@ var setup_server = function (app) {
     app.use(plugins.queryParser());
     app.use(plugins.bodyParser());
     // Routes
-    var history = require('./history');
-    app.get('/v1/history/:imei',history.get);
+    urlRequset.setRequestUrl(routerInstance);
+    routerInstance.applyRoutes(app);
+};
 
-    var itinerary = require('./itinerary');
-    app.get('/v1/itinerary/:imei', itinerary.get);
-
-    var telephone = require('./telephone');
-    app.put('/v1/telephone/:imei', telephone.put);
-    app.post('/v1/telephone/:imei',telephone.post);
-    app.get('/v1/telephone/:imei',telephone.get);
-    app.del('/v1/telephone/:imei', telephone.del);
-
-    var version = require('./version');
-    app.get('/v1/version',version.get);
-
-    var packagedownload = require('./packagedownload');
-    app.get('/v1/package',packagedownload.get);
-
-    var device = require('./device');
-    app.post('/v1/server',device.post);
-    app.post('/v1/device',device.post);
-    
-    var record = require('./record');
-    app.get('/v1/record', record.get);
-
-    var user2dev = require('./user2dev');
-    app.get('/v1/user/:tel',user2dev.get);
-    app.post('/v1/user/:tel',user2dev.post);
-    app.del('/v1/user/:tel',user2dev.del);
-
-    var event = require('./event');
-    app.get('/v1/event/:imei',event.get);
-
-    var deviceEvent = require('./deviceEvent');
-    app.get('/v1/deviceEvent/:imei',deviceEvent.get);
-
-    var deviceData = require('./deviceData');
-    app.get('/v1/imeiData/:imei',deviceData.get);
-    app.del('/v1/imeiData/:imei',deviceData.del);
-    
-    var upload = require('./updownload');
-    app.post('/v1/uploadFile',upload.post);
-    app.get('/v1/uploadFile/:imeiName',upload.get);
-
-}
 // Now, setup both servers in one step
 setup_server(http_server);
 setup_server(https_server);

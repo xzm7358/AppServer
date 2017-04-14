@@ -3,24 +3,24 @@
  */
 var history = exports;
 var dbhandler = require('./dbhandler');
-var logger = require('./log');
+var logger = require('./log').log('logFile');
 history.get = function(req, res, next) {
 
-    logger.log('logFile').info('GET %s', req.url);
+    logger.info('GET %s', req.url);
     res.contentType = 'json';
 
     if(!req.params.hasOwnProperty('imei')){
-        logger.log('logFile').error('history get req.body no imei');
+        logger.error('history get req.body no imei');
         res.send({code: 101});
         return next();
     }
     var imei = req.params.imei;
     if(imei.length != 15) {
-        logger.log('logFile').error('history.js '+imei+' imei.length = '+ imei.length);
+        logger.error('history.js '+imei+' imei.length = '+ imei.length);
         res.send({code: 101});
         return next();
     }
-    logger.log('logFile').info('get imei: '+ imei);
+    logger.info('get imei: '+ imei);
 
     if(!req.query.hasOwnProperty('start')){
         var selectsql = 'SELECT * FROM ' + 'gps_' + imei + ' order by timestamp desc limit 1 ';
@@ -35,20 +35,20 @@ history.get = function(req, res, next) {
         }
         selectsql = 'SELECT * FROM ' + 'gps_' + imei + ' WHERE '+ 'timestamp' + ' BETWEEN ' + start + ' AND ' + end;
     }
-    logger.log('logFile').info('selectsql:' + selectsql);
+    logger.info('selectsql:' + selectsql);
 
     dbhandler(selectsql, function (starterr, startresult){
         if (starterr)
         {
-            logger.log('logFile').fatal('history.js get '+imei+' [SELECT ERROR - '+ starterr.message);
+            logger.fatal('history.js get '+imei+' [SELECT ERROR - '+ starterr.message);
             res.send({code: 101});
         }
         else if(startresult.length === 0){
-            logger.log('logFile').error('history.js get '+imei + ' history get startresult.length = ' + startresult.length);
+            logger.error('history.js get '+imei + ' history get startresult.length = ' + startresult.length);
             res.send({code: 101});
         }
         else{
-            logger.log('logFile').info('db proc OK');
+            logger.info('db proc OK');
             res.send({gps: startresult});
         }
     });

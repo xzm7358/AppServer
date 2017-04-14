@@ -5,8 +5,8 @@
 
 var deviceData = exports;
 
-var logger = require('./log');
-var config = require('./config.json');
+var logger = require('./log').log('logFile');
+var config = require('../config.json');
 var redis = require('redis');
 var url = require('url');
 var http = require('http');
@@ -14,35 +14,35 @@ var dbhandler = require('./dbhandler');
 var async = require('async');
 
 deviceData.get = function (req, res, next) {
-    logger.log('logFile').info('GET %s', req.url);
+    logger.info('GET %s', req.url);
     res.contentType = 'json';
 
     if (!req.params.hasOwnProperty('imei')) {
-        logger.log('logFile').error('deviceData.js get Qt2server imei empty');
+        logger.error('deviceData.js get Qt2server imei empty');
         res.send({code: 101});
         return next();
     }
     var imei = req.params.imei;
     if (imei.length != 15) {
-        logger.log('logFile').error(' deviceData.js ' + imei + ' imei.length = ' + imei.length);
+        logger.error(' deviceData.js ' + imei + ' imei.length = ' + imei.length);
         res.send({code: 103});
         return next();
     }
-    logger.log('logFile').info('get imei: ' + imei);
+    logger.info('get imei: ' + imei);
     var RDS_OPTS = {auth_pass: config.redis_cli.pwd},
         client = redis.createClient(config.redis_cli.port, config.redis_cli.host, RDS_OPTS);
 
     client.on("error", function (err) {
-        logger.log('logFile').error("deviceData.js " + imei + "connect redis client Error: ", err);
+        logger.error("deviceData.js " + imei + "connect redis client Error: ", err);
     });
     client.on("connect", function () {
-        logger.log('logFile').info("get into the connect");
+        logger.info("get into the connect");
         client.get(imei, function (getErr, getRes) {
             if (getErr) {
-                logger.log('logFile').error('deviceData.js '+imei+' error:No imei in the redis server.');
+                logger.error('deviceData.js '+imei+' error:No imei in the redis server.');
                 res.send({code: 101});
             } else if (!getRes) {
-                logger.log('logFile').error('deviceData.js '+ imei +' error:Data in the redis server is empty.');
+                logger.error('deviceData.js '+ imei +' error:Data in the redis server is empty.');
                 res.send({code:109})
             }
             else {
@@ -51,7 +51,7 @@ deviceData.get = function (req, res, next) {
                 config.deviceData_http_options.path = '/v1/imeiData/' + imei;
                 config.deviceData_http_options.port = Url.port;
 
-                logger.log('logFile').info("ready into the http connect:",config.deviceData_http_options);
+                logger.info("ready into the http connect:",config.deviceData_http_options);
                 var requset = http.request(config.deviceData_http_options, function (response) {
                     if (response.statusCode === 200) {
                         var bodydata = "";
@@ -60,20 +60,20 @@ deviceData.get = function (req, res, next) {
                         });
                         response.on('end', function () {
                             res.send(JSON.parse(bodydata));
-                            logger.log('logFile').info('dev2Manager:', JSON.parse(bodydata));
+                            logger.info('dev2Manager:', JSON.parse(bodydata));
                         });
                     }
                     else {
-                        logger.log('logFile').error("deviceData.js "+imei+" ERROR: simcom server no response ");
+                        logger.error("deviceData.js "+imei+" ERROR: simcom server no response ");
                         res.send({code: 106});
                     }
                 });
                 requset.on('error', function (reqerr) {
-                    logger.log('logFile').fatal('deviceData.js '+imei+' problem with request after:' + reqerr.message);
+                    logger.fatal('deviceData.js '+imei+' problem with request after:' + reqerr.message);
                     res.send({code: 100})
                 });
                 requset.on('timeout',function (err) {
-                    logger.log('logFile').fatal('deviceData.js ' +imei+' problem with request timeout:' + err.message);
+                    logger.fatal('deviceData.js ' +imei+' problem with request timeout:' + err.message);
                 });
                 requset.end();
             }
@@ -85,21 +85,21 @@ deviceData.get = function (req, res, next) {
 
 
 deviceData.del = function (req, res, next) {
-    logger.log('logFile').info('DEL %s', req.url);
+    logger.info('DEL %s', req.url);
     res.contentType = 'json';
 
     if (!req.params.hasOwnProperty('imei')) {
-        logger.log('logFile').error('deviceData.js del Qt2server imei empty');
+        logger.error('deviceData.js del Qt2server imei empty');
         res.send({code: 101});
         return next();
     }
     var imei = req.params.imei;
     if (imei.length != 15) {
-        logger.log('logFile').error(imei + 'imei.length = ' + imei.length);
+        logger.error(imei + 'imei.length = ' + imei.length);
         res.send({code: 103});
         return next();
     }
-    logger.log('logFile').info('get imei at the delete function: ' + imei);
+    logger.info('get imei at the delete function: ' + imei);
     var delGpsSql = "delete from gps_" + imei;
     var delItinerarySql = "TRUNCATE TABLE itinerary_" + imei;
     var delVoltageSql = "update object set voltage=0 where imei=" + imei;
@@ -119,9 +119,9 @@ deviceData.del = function (req, res, next) {
             if (err) {
                 //异常后调用callback并传入err
                 callback(err);
-                logger.log('logFile').error("SQL:"+imei+":"+ item +"failed at deviceData.del");
+                logger.error("SQL:"+imei+":"+ item +"failed at deviceData.del");
             } else {
-                logger.log('logFile').info("SQL:"+imei+":"+ item +"success at deviceData.del");
+                logger.info("SQL:"+imei+":"+ item +"success at deviceData.del");
                 callback();
             }
         });
@@ -129,10 +129,10 @@ deviceData.del = function (req, res, next) {
     },function (allerr) {
         //所有SQL执行完成后回调
         if (allerr) {
-            logger.log('logFile').error(imei+":All SQL finished at deviceData.del ,but error occured:",allerr);
+            logger.error(imei+":All SQL finished at deviceData.del ,but error occured:",allerr);
             res.send({code:100})
         } else {
-            logger.log('logFile').info("ALL SQL success.");
+            logger.info("ALL SQL success.");
             res.send({code:0});
         }
     });
