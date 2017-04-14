@@ -8,16 +8,20 @@ const restify = require('restify');
 const plugins = require('restify-plugins');
 
 const fs = require('fs');
-const config = require('./routes/config.json');
 // const heapdump = require('heapdump');
 // const memwatch= require('memwatch-next');
 const routerInstance = require('./routes/routes');
 
-const keys_dir = './cert/';
-const http_server = restify.createServer(config.server.http_options);
+const http_options = {
+    name: 'Electromble@xiaoan',
+    version: '1.0.0'
+};
+const http_server = restify.createServer(http_options);
 
+const keys_dir = './cert/';
 var https_options = {
     name: 'Electromble@xiaoan',
+    version: '1.0.0',
     key: fs.readFileSync(keys_dir + 'privatekey.key'), //on current folder
     certificate: fs.readFileSync(keys_dir + 'certificate.cert'),
 };
