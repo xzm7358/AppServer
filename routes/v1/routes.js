@@ -47,5 +47,12 @@ router.del('/imeiData/:imei',deviceData.del);
 var upload = require('./updownload');
 router.post('/uploadFile',upload.post);
 router.get('/uploadFile/:imeiName',upload.get);
+
+var motorcycle = require('./motorcycle');
+
+router.post('/motorcycle',motorcycle.post);
+router.del('/motorcycle',motorcycle.del);
+
+
 module.exports=router;
 
