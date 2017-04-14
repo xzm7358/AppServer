@@ -39,4 +39,4 @@ event.get = function (req, res, next) {
         }
     });
     return next();
-}
+};

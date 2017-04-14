@@ -41,7 +41,7 @@ router.get('/', function(req , res, next) {
             logger.error('no data in database');
             res.send({code:101});
         } else {
-            var app_path = appPath+ "/" + result[0].fileName;
+            var app_path = appPath+ '/' + result[0].fileName;
             logger.log('app_path:',app_path);
             fs.stat(app_path,function (err,stats) {
                 if (err) {
@@ -55,12 +55,12 @@ router.get('/', function(req , res, next) {
                         versionName:result[0].versionName,
                         versionCode:result[0].versionCode,
                         changelog:result[0].changeLog,
-                        packageSize:size + "MB"
+                        packageSize:size + 'MB'
                     });
                 }
             });
         }
-    })
+    });
     return next();
 });
 
