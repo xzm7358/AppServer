@@ -4,7 +4,7 @@
 const restify = require('restify');
 const plugins = require('restify-plugins');
 
-const hd;
+var hd;
 const fs = require('fs');
 const config = require('./routes/config.json');
 const memwatch= require('memwatch-next');
