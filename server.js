@@ -1,23 +1,28 @@
-/**
- * Created by zouzh on 2017/1/16.
+/* Copyright (C) Xiaoan Technology Co., Ltd - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Tom Chiang <jiangtao@xiaoantech.com>, Feb 2017
  */
+
 const restify = require('restify');
 const plugins = require('restify-plugins');
 
 const fs = require('fs');
-const config = require('./routes/config.json');
+// const heapdump = require('heapdump');
 // const memwatch= require('memwatch-next');
-
 const routerInstance = require('./routes/routes');
-const adminRouter = require('./admin/routes');
+const adminRouter = require('./admin');
 
-const logger = require('./routes/v1/log').log('logFile');
+const http_options = {
+    name: 'Electromble@xiaoan',
+    version: '1.0.0'
+};
+const http_server = restify.createServer(http_options);
 
 const keys_dir = './cert/';
-const http_server = restify.createServer(config.server.http_options);
-
 var https_options = {
     name: 'Electromble@xiaoan',
+    version: '1.0.0',
     key: fs.readFileSync(keys_dir + 'privatekey.key'), //on current folder
     certificate: fs.readFileSync(keys_dir + 'certificate.cert'),
 };
@@ -39,6 +44,7 @@ var setup_server = function (app) {
     app.use(plugins.queryParser());
     app.use(plugins.bodyParser());
     app.use(restify.authorizationParser());
+    
     // Routes
     routerInstance.applyRoutes(app);
     adminRouter.applyRoutes(app, '/admin');

@@ -4,7 +4,7 @@
     "redis_cli":
     {
         "host":"xxx.xxx.xxx.xxx",
-        "port": xxx,
+        "port": 6379,
         "pwd" :"xxxxxxxxxx"
     },
     "mysql":
@@ -14,18 +14,6 @@
         "password": "xxx",
         "database": "xxx",
         "multipleStatements" : true
-    },
-    "server":
-    {
-        "http_options":
-        {
-            "name": "Electromble@xiaoan",
-            "version": "1.0.0"
-        },
-        "https_options":
-        {
-            "name": "Electromble@xiaoan"
-        }
 
     },
     "device_http_options":
