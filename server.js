@@ -4,10 +4,9 @@
 const restify = require('restify');
 const plugins = require('restify-plugins');
 
-var hd;
 const fs = require('fs');
 const config = require('./routes/config.json');
-const memwatch= require('memwatch-next');
+// const memwatch= require('memwatch-next');
 
 const routerInstance = require('./routes/routes');
 const adminRouter = require('./admin/routes');
@@ -46,16 +45,6 @@ var setup_server = function (app) {
 };
 
 
-memwatch.on('leak',function (info) {
-    logger.error('server.js Memory leak detected:',info);
-    if (!hd) {
-        hd = new memwatch.HeapDiff();
-    } else {
-        var diff= hd.end();
-        logger.error(util.inspect(diff, true, null));
-        hd = null;
-    }
-});
 // Now, setup both servers in one step
 setup_server(http_server);
 setup_server(https_server);
