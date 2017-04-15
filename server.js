@@ -11,7 +11,7 @@ const fs = require('fs');
 // const heapdump = require('heapdump');
 // const memwatch= require('memwatch-next');
 const routerInstance = require('./routes/routes');
-const adminRouter = require('./admin/routes');
+const adminRouter = require('./admin');
 
 const http_options = {
     name: 'Electromble@xiaoan',
