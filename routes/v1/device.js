@@ -1,7 +1,7 @@
 /**
  * Created by zzs on 2017/1/5.
  */
-var config = require('../config.json');
+var config = require('../../config.json');
 var http = require('http');
 var logger = require('./log').log('logFile');
 var redis = require('redis');
