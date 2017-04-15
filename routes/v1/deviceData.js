@@ -3,7 +3,7 @@
  */
 
 var logger = require('./log').log('logFile');
-var config = require('../config.json');
+var config = require('../../config.json');
 var redis = require('redis');
 var url = require('url');
 var http = require('http');
