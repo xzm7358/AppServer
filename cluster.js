@@ -1,12 +1,12 @@
-    var cluster = require('cluster');
+var cluster = require('cluster');
 
-    if (cluster.isMaster) {
-        //start up workers for each cpu
-        require('os').cpus().forEach(function() {
-            cluster.fork();
-        });
+if (cluster.isMaster) {
+  //start up workers for each cpu
+  require('os').cpus().forEach(function() {
+    cluster.fork();
+  });
 
-    } else {
-        //load up your application as a worker
-        require('./server.js');
-    }
+} else {
+  //load up your application as a worker
+  require('./server.js');
+}
