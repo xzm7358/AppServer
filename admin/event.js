@@ -11,8 +11,8 @@ const router = new Router();
 
 
 router.get('/', function(req , res, next) {
-    res.send(201, Math.random().toString(36).substr(3, 8));
-    return next();
+  res.send(201, Math.random().toString(36).substr(3, 8));
+  return next();
 });
 
 module.exports = router;
