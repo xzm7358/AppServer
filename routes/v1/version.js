@@ -1,15 +1,21 @@
-/**
- * Created by zzs on 2017/1/3.
+/* Copyright (C) Xiaoan Technology Co., Ltd - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Tom Chiang <jiangtao@xiaoantech.com>, Feb 2017
  */
-var version = exports;
-var mysql = require('mysql');
+
 var dbhandler = require('./dbhandler');
 var fs = require('fs');
 var logger = require('./log').log('logFile');
 var path = require('path');
-version.get = function(req , res, next) {
+
+const Router = require('restify-router').Router;
+const router = new Router();
+
+
+router.get('/', function(req , res, next) {
     var selectsql;
-    logger.info("GET ", req.url);
+    logger.trace('GET ', req.url);
     res.contentType = 'json';
     var type = req.query.type;
     logger.info('type: ', type);
@@ -35,7 +41,7 @@ version.get = function(req , res, next) {
             logger.error('no data in database');
             res.send({code:101});
         } else {
-            var app_path = appPath+ "/" + result[0].fileName;
+            var app_path = appPath+ '/' + result[0].fileName;
             logger.log('app_path:',app_path);
             fs.stat(app_path,function (err,stats) {
                 if (err) {
@@ -49,11 +55,13 @@ version.get = function(req , res, next) {
                         versionName:result[0].versionName,
                         versionCode:result[0].versionCode,
                         changelog:result[0].changeLog,
-                        packageSize:size + "MB"
+                        packageSize:size + 'MB'
                     });
                 }
             });
         }
-    })
+    });
     return next();
-};
+});
+
+module.exports = router;

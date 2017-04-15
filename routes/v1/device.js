@@ -1,8 +1,6 @@
 /**
  * Created by zzs on 2017/1/5.
  */
-
-var device = exports;
 var config = require('../config.json');
 var http = require('http');
 var logger = require('./log').log('logFile');
@@ -10,8 +8,10 @@ var redis = require('redis');
 var url= require('url');
 
 var path = require('path');
+const Router = require('restify-router').Router;
+const router = new Router();
 
-device.post = function (req, res, next) {
+router.post('',function (req, res, next) {
     logger.info('POST ', req.url);
     res.contentType = 'json';
     if ( !req.body )
@@ -35,6 +35,7 @@ device.post = function (req, res, next) {
             logger.info("get into the connect");
             client.get(imei,function(getErr, getRes) {
                 if (getErr) {
+                    logger.error('device.js req.body:',req.body);
                     logger.error('device.js '+imei +': connect error:'+ getErr);
                     res.send({code:101});
                 } else if(!getRes) {
@@ -95,4 +96,5 @@ device.post = function (req, res, next) {
         })
     }
     return next();
-};
+});
+module.exports = router;

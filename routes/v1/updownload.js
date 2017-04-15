@@ -7,7 +7,11 @@ var fs = require('fs');
 var path = require('path');
 var multiparty = require('multiparty');
 const uploadDir = "../upload/";
-updownload.get = function (req, res, next) {
+
+const Router = require('restify-router').Router;
+const router = new Router();
+
+router.get('/:imeiName',function (req, res, next) {
     res.contentType = 'json';
     logger.info('GET %s',req.url);
     if (!req.params.imeiName) {
@@ -37,9 +41,9 @@ updownload.get = function (req, res, next) {
 
     return next();
 
-};
+});
 
-updownload.post = function (req, res, next) {
+router.post('',function (req, res, next) {
     logger.info('POST %s',req.url);
     if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir);
@@ -71,4 +75,5 @@ updownload.post = function (req, res, next) {
     });
 	
     return next();
-}
+});
+module.exports=router;

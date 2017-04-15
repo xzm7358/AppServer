@@ -1,13 +1,14 @@
 /**
  * Created by zzs on 2017/1/3.
  */
+const Router = require('restify-router').Router;
+const router = new Router();
 
-var packagedownload = exports;
 var fs = require('fs');
 var dbhandler= require('./dbhandler');
 var logger = require('./log').log('logFile');
 var path = require('path');
-packagedownload.get = function (req, res, next) {
+router.get('/',function (req, res, next) {
     logger.info("GET ", req.url);
     if (!fs.existsSync(path.resolve(__dirname,'../../app/'))) {
         fs.mkdirSync(path.resolve(__dirname,'../../app/'));
@@ -56,5 +57,5 @@ packagedownload.get = function (req, res, next) {
     });
 
     return next();
-
-}
+});
+module.exports = router;

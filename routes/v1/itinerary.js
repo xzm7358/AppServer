@@ -2,9 +2,13 @@
  * Created by lc on 2016-12-28.
  */
 var dbhandler = require('./dbhandler');
-var itinerary = exports;
+
 var logger = require('./log').log('logFile');
-itinerary.get = function(req, res, next) {
+
+const Router = require('restify-router').Router;
+const router = new Router();
+
+router.get('/:imei',function(req, res, next) {
     var selectsql;
 
     logger.info('GET %s', req.url);
@@ -81,4 +85,5 @@ itinerary.get = function(req, res, next) {
     });
 
     return next();
-}
+});
+module.exports=router;

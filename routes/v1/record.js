@@ -2,13 +2,15 @@
  * Created by zzs on 2017/1/12.
  */
 
-var record = exports;
 var fs = require('fs');
 var amrToMp3 = require('amrToMp3');
 var path = require('path');
 var logger = require('./log').log('logFile');
 
-record.get = function (req, res, next) {
+const Router = require('restify-router').Router;
+const router = new Router();
+
+router.get('/',function (req, res, next) {
     logger.info('GET %s', req.url);
     res.contentType = 'json';
     if (!req.query.name) {
@@ -63,4 +65,5 @@ record.get = function (req, res, next) {
         }
     });
     return next();
-};
+});
+module.exports=router;

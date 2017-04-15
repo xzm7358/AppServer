@@ -1,11 +1,16 @@
 /**
  * Created by zouzh on 2017/1/18.
  */
-var user2dev = exports;
+
 var logger = require('./log').log('logFile');
 var dbhandler = require('./dbhandler')
+
+const Router = require('restify-router').Router;
+const router = new Router();
+
+
 //seek
-user2dev.get = function (req, res, next) {
+router.get('/:tel',function (req, res, next) {
     logger.info('GET %s', req.url);
     res.contentType = 'json';
     if (!req.params.hasOwnProperty('tel')) {
@@ -54,9 +59,9 @@ user2dev.get = function (req, res, next) {
 
     })
     return next();
-}
+});
 //bingding
-user2dev.post = function (req, res, next) {
+router.post('/:tel',function (req, res, next) {
     logger.info('POST %s', req.url);
     res.contentType = 'json';
 
@@ -99,9 +104,9 @@ user2dev.post = function (req, res, next) {
 
     })
     return next();
-};
+});
 //delete
-user2dev.del = function (req, res, next) {
+router.del('/:tel',function (req, res, next) {
     logger.info('DEL %s', req.url);
     res.contentType = 'json';
 
@@ -144,4 +149,5 @@ user2dev.del = function (req, res, next) {
 
     })
     return next();
-};
+});
+module.exports=router;

@@ -4,9 +4,15 @@
  * Written by Tom Chiang <jiangtao@xiaoantech.com>, Feb 2017
  */
 
-const Router = require('restify-router').Router;
 
+
+const Router = require('restify-router').Router;
 const router = new Router();
-router.add('/v1', require('./v1/routes'));
+
+
+router.get('/', function(req , res, next) {
+    res.send(201, Math.random().toString(36).substr(3, 8));
+    return next();
+});
 
 module.exports = router;
