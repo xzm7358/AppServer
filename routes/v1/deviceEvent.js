@@ -1,5 +1,8 @@
 /**
- * Created by zouzh on 2017/3/1.
+ *  Copyright (C) Xiaoan Technology Co., Ltd - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Tom Chiang <jiangtao@xiaoantech.com>, Feb 2017
  */
 
 
@@ -20,7 +23,7 @@ router.get('/:imei',function (req, res, next) {
   }
   var imei = req.params.imei;
 
-  if (imei.length != 15)
+  if (imei.length !== 15)
     {
     logger.error('deviceEvent.js'+imei+' imei.length = ' + imei.length);
     res.send({code:101});
@@ -35,12 +38,12 @@ router.get('/:imei',function (req, res, next) {
   else if(!req.query.hasOwnProperty('start')){
     logger.info('no start parameter in the url');
     var end = req.query.end;
-    var start =  deviceEvent.getDate(end - (end % 86400));
-    end = deviceEvent.getDate(end);
+    var start =  getDate(end - (end % 86400));
+    end = getDate(end);
     var selectsql = 'SELECT * FROM log where (imei=' + imei + ' AND '+ '(time >= ' + start + ' AND time <= ' + end +'))';
   } else {
 
-    var start = deviceEvent.getDate(req.query.start);
+    var start = getDate(req.query.start);
     if(!req.query.hasOwnProperty('end')){
       logger.info('no end parameter in the url');
       var selectsql = 'SELECT * FROM log where imei='+imei+' AND ' + 'time' + '>=' + start;
