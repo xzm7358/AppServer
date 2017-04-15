@@ -2,13 +2,14 @@
  * Created by zouzh on 2017/3/1.
  */
 
-var deviceEvent = exports;
 
 var dbhandler = require('./dbhandler');
 
 var logger = require('./log').log('logFile');
+const Router = require('restify-router').Router;
+const router = new Router();
 
-deviceEvent.get = function (req, res, next) {
+router.get('/:imei',function (req, res, next) {
     logger.info('GET %s', req.url);
     res.contentType = 'json';
 
@@ -46,7 +47,7 @@ deviceEvent.get = function (req, res, next) {
         }
         else {
             logger.info('start and end para all on');
-            var end = deviceEvent.getDate(req.query.end);
+            var end = getDate(req.query.end);
             var selectsql = 'SELECT * FROM log where (imei=' + imei + ' AND '+ '(time >= ' + start + ' AND time <= ' + end +'))';
         }
 
@@ -71,11 +72,12 @@ deviceEvent.get = function (req, res, next) {
         }
     });
     return next();
-}
+});
 
-deviceEvent.getDate = function(timestamp) {
+const getDate = function(timestamp) {
     var data = new Date(timestamp * 1000);
     var time = data.getFullYear() + '-' + (data.getMonth() + 1 < 10 ? '0' + (data.getMonth() + 1) : data.getMonth() + 1) + '-' + data.getDate() + ' ' + data.getHours() + ':' + data.getMinutes() + ':' + data.getSeconds();
     time = '\''+time+'\'';
     return time;
 };
+module.exports=router;

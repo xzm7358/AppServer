@@ -2,9 +2,6 @@
  * Created by zouzh on 2017/3/1.
  */
 
-
-var deviceData = exports;
-
 var logger = require('./log').log('logFile');
 var config = require('../config.json');
 var redis = require('redis');
@@ -12,8 +9,10 @@ var url = require('url');
 var http = require('http');
 var dbhandler = require('./dbhandler');
 var async = require('async');
+const Router = require('restify-router').Router;
+const router = new Router();
 
-deviceData.get = function (req, res, next) {
+router.get('/:imei', function (req, res, next) {
     logger.info('GET %s', req.url);
     res.contentType = 'json';
 
@@ -81,10 +80,10 @@ deviceData.get = function (req, res, next) {
         });
     })
     return next();
-};
+});
 
 
-deviceData.del = function (req, res, next) {
+router.del('/:imei', function (req, res, next) {
     logger.info('DEL %s', req.url);
     res.contentType = 'json';
 
@@ -137,4 +136,5 @@ deviceData.del = function (req, res, next) {
         }
     });
     return next();
-}
+});
+module.exports=router;

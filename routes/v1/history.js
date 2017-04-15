@@ -1,10 +1,12 @@
 /**
  * Created by jk on 2016-12-28.
  */
-var history = exports;
+const Router = require('restify-router').Router;
+const router = new Router();
+
 var dbhandler = require('./dbhandler');
 var logger = require('./log').log('logFile');
-history.get = function(req, res, next) {
+router.get('/:imei',function(req, res, next) {
 
     logger.info('GET %s', req.url);
     res.contentType = 'json';
@@ -53,4 +55,5 @@ history.get = function(req, res, next) {
         }
     });
     return next();
-};
+});
+module.exports=router;

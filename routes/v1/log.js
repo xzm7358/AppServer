@@ -9,7 +9,6 @@ exports.log = function (name) {
         fs.mkdirSync(path.resolve(__dirname, '../../logs/'));
     }
     var filename = path.resolve(__dirname, '../../') + "/logs/time";
-    console.log('filename:',filename);
     log4js.configure({
         "appenders":
             [

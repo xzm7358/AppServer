@@ -5,9 +5,11 @@ const dbhandler = require('./dbhandler');
 
 const logger = require('./log').log('logFile');
 const async = require('async');
-const motorcycle = exports;
 
-motorcycle.post = function (req, res, next) {
+const Router = require('restify-router').Router;
+const router = new Router();
+
+router.post('',function (req, res, next) {
   logger.info('POST %s',req.url);
   res.contentType = 'json';
 
@@ -69,9 +71,9 @@ motorcycle.post = function (req, res, next) {
       });
   }
   return next();
-};
+});
 
-motorcycle.del = function (req, res, next) {
+router.del('/:imei',function (req, res, next) {
     logger.info('DEL %s',req.url);
     res.contentType = 'json';
     logger.info(req.params);
@@ -102,4 +104,5 @@ motorcycle.del = function (req, res, next) {
         })
     }
     return next();
-};
+});
+module.exports=router;

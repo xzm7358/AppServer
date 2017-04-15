@@ -1,27 +1,31 @@
-/**
- * Created by jk on 2016-12-28.
+/* Copyright (C) Xiaoan Technology Co., Ltd - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Tom Chiang <jiangtao@xiaoantech.com>, 2016-12-28
  */
-TopClient = require('topSdk').ApiClient;
-var mysql = require('mysql');
+
 var callAlarm = require('./alarm');
 var dbhandler = require('./dbhandler');
 var logger = require('./log').log('logFile');
 
-var telephone = exports;
 var telnumber = [
-    "01053912804",
-    "057126883072",
-    "051482043270",
-    "01053912805",
-    "051482043271",
-    "057126883073",
-    "051482043272",
-    "01053912806",
-    "051482043273",
-    "057126883074",
-    "051482043274",
+    '01053912804',
+    '057126883072',
+    '051482043270',
+    '01053912805',
+    '051482043271',
+    '057126883073',
+    '051482043272',
+    '01053912806',
+    '051482043273',
+    '057126883074',
+    '051482043274',
 ];
-telephone.put = function(req, res, next) {
+
+const Router = require('restify-router').Router;
+const router = new Router();
+
+router.put('/:imei', function(req , res, next) {
     logger.info('PUT %s', req.url);
     res.contentType = 'json';
     if(!req.params.hasOwnProperty('imei')){
@@ -36,10 +40,10 @@ telephone.put = function(req, res, next) {
     logger.info('get imei: '+ imei);
 
     var arr = [];
-    req.on("data",function(data){
+    req.on('data',function(data){
         arr.push(data);
     });
-    req.on("end",function(){
+    req.on('end',function(){
         var data = Buffer.concat(arr).toString();
         var ret = JSON.parse(data);
         req.body = ret;
@@ -100,9 +104,9 @@ telephone.put = function(req, res, next) {
     });
 
     return next();
-};
+});
 
-telephone.post = function(req, res, next) {
+router.post('/:imei', function(req , res, next) {
     logger.info('POST %s', req.url);
     res.contentType = 'json';
 
@@ -122,10 +126,10 @@ telephone.post = function(req, res, next) {
     logger.info('get imei: '+ imei);
 
     var arr = [];
-    req.on("data",function(data){
+    req.on('data',function(data){
         arr.push(data);
     });
-    req.on("end",function(){
+    req.on('end',function(){
         var data= Buffer.concat(arr).toString();
         var ret = JSON.parse(data);
 
@@ -191,9 +195,9 @@ telephone.post = function(req, res, next) {
         return next();
     }
     return next();
-};
+});
 
-telephone.get = function(req, res, next) {
+router.get('/:imei', function(req , res, next) {
     logger.info('GET %s', req.url);
     res.contentType = 'json';
 
@@ -223,7 +227,7 @@ telephone.get = function(req, res, next) {
         else {
             if(startresult.length === 0)
             {
-                logger.error("telephone.js "+imei+ " get method select * from imei2Telnumber : no telnumber in database");
+                logger.error('telephone.js '+imei+ ' get method select * from imei2Telnumber : no telnumber in database');
                 res.send({code: 101});
             }
             else{
@@ -233,7 +237,7 @@ telephone.get = function(req, res, next) {
                     res.send({telephone: telephone});
                 }
                 else{
-                    logger.error("telephone.js " +imei+" get method select * from imei2Telnumber :no telnumber in sql result");
+                    logger.error('telephone.js ' +imei+' get method select * from imei2Telnumber :no telnumber in sql result');
                     res.send({code: 101});
                 }
             }
@@ -241,9 +245,9 @@ telephone.get = function(req, res, next) {
     });
 
     return next();
-};
+});
 
-telephone.del = function(req, res, next) {
+router.del('/:imei', function(req , res, next) {
     logger.info('DELETE %s', req.url);
     res.contentType = 'json';
 
@@ -274,4 +278,6 @@ telephone.del = function(req, res, next) {
     });
 
     return next();
-};
+});
+
+module.exports = router;

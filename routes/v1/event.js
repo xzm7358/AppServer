@@ -1,10 +1,13 @@
 /**
  * Created by zzs on 2017/1/18.
  */
-var event = exports;
 var dbhandler = require('./dbhandler');
 var logger = require('./log').log('logFile');
-event.get = function (req, res, next) {
+
+const Router = require('restify-router').Router;
+const router = new Router();
+
+router.get('/:imei',function (req, res, next) {
     logger.info('GET %s', req.url);
     res.contentType = 'json';
     if (!req.params.hasOwnProperty('imei')) {
@@ -39,4 +42,5 @@ event.get = function (req, res, next) {
         }
     });
     return next();
-}
+});
+module.exports=router;
